@@ -20,7 +20,7 @@ Create well-formatted commit: $ARGUMENTS
 ## What This Command Does
 
 1. Checks which files are staged with `git status`
-2. If 0 files are staged, automatically adds all modified and new files with `git add`
+2. If 0 files are staged, automatically adds all modified and new files with `git add .`
 3. Performs a `git diff` to understand what changes are being committed
 4. Analyzes the diff to determine if multiple distinct logical changes are present
 5. If multiple distinct changes are detected, suggests breaking the commit into multiple smaller commits

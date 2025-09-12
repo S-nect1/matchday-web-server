@@ -109,3 +109,13 @@ When unsure about implementation details, ALWAYS ask the developer.
 JPA에서 엔티티간 관계를 설정할 때 양방향 매핑은 정말 필요한 경우가 아니라면 자제해.
 생성자가 아닌 정적 팩토리 메서드를 사용하여 개발을 진행할꺼야.
 도메인 주도 개발(Domain Driven Development) 원칙에 따라 개발을 진행해줘.
+
+## when git commit
+1. Checks which files are staged with `git status`
+2. If 0 files are staged, automatically adds all modified and new files with `git add`
+3. Performs a `git diff` to understand what changes are being committed
+4. Analyzes the diff to determine if multiple distinct logical changes are present
+5. If multiple distinct changes are detected, suggests breaking the commit into multiple smaller commits
+6. For each commit (or the single commit if not split), creates a commit message
+7. If accepted, update the memory CLAUDE.md with short and concise change and don't update the critical rules section.
+8. Commit the changes git add . then git commit

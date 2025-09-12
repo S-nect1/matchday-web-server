@@ -36,8 +36,7 @@ out/
 ### VS Code ###
 .vscode/
 
-.claude/settings.local.json
-.claude/agents/
+.claude/
 .mcp.json
 PRD.md
 tasklist.md
