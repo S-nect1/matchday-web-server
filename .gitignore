@@ -39,3 +39,6 @@ out/
 .claude/settings.local.json
 .claude/agents/
 .mcp.json
+PRD.md
+tasklist.md
+CLAUDE.md
