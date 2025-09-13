@@ -5,9 +5,8 @@ import com.matchday.global.entity.enums.*;
 import com.matchday.team.domain.enums.Position;
 import com.matchday.user.domain.enums.FootType;
 import com.matchday.user.domain.enums.Gender;
-import com.matchday.user.domain.enums.MemberRole;
+import com.matchday.user.domain.enums.UserRole;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -50,7 +49,7 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private MemberRole role;
+    private UserRole role;
 
     private String phoneNumber;
 
@@ -64,11 +63,13 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Boolean isProfessional;
 
-    public static User createUser(String email, String rawPassword, String name, 
-                                 LocalDate birth, Integer height, Gender gender, 
-                                 Position mainPosition, MemberRole role, String phoneNumber,
-                                 City city, District district, Boolean isProfessional,
-                                 PasswordEncoder passwordEncoder) {
+    private Integer backNumber;
+
+    public static User createUser(String email, String rawPassword, String name,
+                                  LocalDate birth, Integer height, Gender gender,
+                                  Position mainPosition, UserRole role, String phoneNumber,
+                                  City city, District district, Boolean isProfessional,
+                                  PasswordEncoder passwordEncoder) {
         User user = new User();
         user.email = email;
         user.password = passwordEncoder.encode(rawPassword);

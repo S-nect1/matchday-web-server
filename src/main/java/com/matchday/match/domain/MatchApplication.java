@@ -1,7 +1,9 @@
 package com.matchday.match.domain;
 
 import com.matchday.global.entity.BaseEntity;
+import com.matchday.global.entity.enums.ResponseCode;
 import com.matchday.match.domain.enums.MatchApplicationStatus;
+import com.matchday.match.exception.advice.MatchControllerAdvice;
 import com.matchday.team.domain.Team;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -51,7 +53,7 @@ public class MatchApplication extends BaseEntity {
     // 처리 가능한 상태인지 확인(신청 상태에서만 처리 가능)
     private void validateCanProcess() {
         if (this.status != MatchApplicationStatus.APPLIED) {
-            throw new IllegalStateException("신청 상태에서만 처리할 수 있습니다.");
+            throw new MatchControllerAdvice(ResponseCode.MATCH_APPLICATION_INVALID_STATUS);
         }
     }
 

@@ -1,12 +1,12 @@
 package com.matchday.user.domain.enums;
 
-public enum MemberRole {
+public enum UserRole {
     ROLE_ADMIN("관리자"),
     ROLE_MEMBER("일반회원");
     
     private final String description;
     
-    MemberRole(String description) {
+    UserRole(String description) {
         this.description = description;
     }
     
