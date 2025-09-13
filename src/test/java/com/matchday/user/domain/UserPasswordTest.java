@@ -3,6 +3,7 @@ package com.matchday.user.domain;
 import com.matchday.global.entity.enums.City;
 import com.matchday.global.entity.enums.District;
 import com.matchday.team.domain.enums.Position;
+import com.matchday.user.domain.enums.Gender;
 import com.matchday.user.domain.enums.MemberRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

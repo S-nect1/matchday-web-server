@@ -17,14 +17,13 @@ public class Team extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "name", nullable = false, length = 100)
+    @Column(nullable = false)
     private String name;
     
-    @Column(name = "description", length = 500)
     private String description;
     
     @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false)
+    @Column(nullable = false)
     private TeamType type;
 
     @Enumerated(EnumType.STRING)
@@ -37,10 +36,10 @@ public class Team extends BaseEntity {
     private Boolean hasBall = false;
     
     @Enumerated(EnumType.STRING)
-    @Column(name = "gender", nullable = false, length = 10)
+    @Column(nullable = false)
     private GroupGender gender;
     
-    @Column(name = "member_limit", nullable = false)
+    @Column(nullable = false)
     private Integer memberLimit = 0;
     
     @Column(nullable = false, unique = true, length = 6)
@@ -51,7 +50,6 @@ public class Team extends BaseEntity {
     @Column(nullable = false)
     private String bankAccount;
 
-    @Column(name = "profile_image_url")
     private String profileImageUrl;
     
     private Integer statsWins = 0;

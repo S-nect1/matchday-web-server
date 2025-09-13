@@ -1,6 +1,8 @@
 package com.matchday.match.domain;
 
 import com.matchday.global.entity.BaseEntity;
+import com.matchday.global.entity.enums.City;
+import com.matchday.global.entity.enums.District;
 import com.matchday.match.domain.enums.MatchSize;
 import com.matchday.match.domain.enums.SportsType;
 import com.matchday.team.domain.Team;
@@ -18,7 +20,11 @@ public class Match extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Team homeTeam;
 
-    private String location;
+    @Enumerated(EnumType.STRING)
+    private City city;
+    @Enumerated(EnumType.STRING)
+    private District district;
+    private String placeName;
 
     private LocalDate date;
     private LocalTime startTime;

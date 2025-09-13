@@ -4,6 +4,7 @@ import com.matchday.global.entity.BaseEntity;
 import com.matchday.global.entity.enums.*;
 import com.matchday.team.domain.enums.Position;
 import com.matchday.user.domain.enums.FootType;
+import com.matchday.user.domain.enums.Gender;
 import com.matchday.user.domain.enums.MemberRole;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

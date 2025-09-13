@@ -1,4 +1,4 @@
-package com.matchday.user.domain;
+package com.matchday.user.domain.enums;
 
 public enum Gender {
     MALE("남성"),
