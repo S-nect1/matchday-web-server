@@ -41,7 +41,7 @@ public interface TeamControllerDocs {
         }
     )
 
-    BaseResponse<TeamResponse> getTeam(
+    BaseResponse<TeamResponse> getTeamDetails(
         @Parameter(description = "팀 ID", example = "1")
         @PathVariable Long teamId
     );
@@ -84,7 +84,7 @@ public interface TeamControllerDocs {
             @ApiResponse(responseCode = "200", description = "팀 목록 조회 성공")
         }
     )
-    BaseResponse<PagedResponse<TeamListResponse>> getTeams(
+    BaseResponse<PagedResponse<TeamListResponse>> getTeamList(
         @Parameter(description = "시/도 필터", example = "SEOUL") 
         @RequestParam(required = false) City city,
         

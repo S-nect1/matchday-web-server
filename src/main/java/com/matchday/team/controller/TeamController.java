@@ -13,7 +13,6 @@ import com.matchday.team.dto.request.TeamUpdateRequest;
 import com.matchday.team.dto.response.TeamListResponse;
 import com.matchday.team.dto.response.TeamResponse;
 import com.matchday.team.service.TeamService;
-import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.StringUtils;
@@ -32,7 +31,7 @@ public class TeamController implements TeamControllerDocs {
     }
 
     @GetMapping("/{teamId}")
-    public BaseResponse<TeamResponse> getTeam(@PathVariable Long teamId) {
+    public BaseResponse<TeamResponse> getTeamDetails(@PathVariable Long teamId) {
         TeamResponse response = TeamResponse.from(teamService.getTeam(teamId));
         return BaseResponse.onSuccess(response, ResponseCode.OK);
     }
@@ -57,7 +56,7 @@ public class TeamController implements TeamControllerDocs {
     }
 
     @GetMapping
-    public BaseResponse<PagedResponse<TeamListResponse>> getTeams(
+    public BaseResponse<PagedResponse<TeamListResponse>> getTeamList(
             @RequestParam(required = false) City city,
             @RequestParam(required = false) District district,
             @RequestParam(required = false) TeamType type,
