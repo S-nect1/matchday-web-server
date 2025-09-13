@@ -5,85 +5,10 @@ spring:
   profiles:
     active: dev
 
----
-spring:
-  config:
-    activate:
-      on-profile: dev
-  
-  datasource:
-    url: jdbc:mysql://localhost:3306/matchday?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-        format_sql: true
-    show-sql: true
-  
-  security:
-    enabled: false
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
-
-springdoc:
-  api-docs:
-    enabled: true
-    path: /api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-    enabled: true
-
-logging:
-  level:
-    com.matchday: DEBUG
-    org.springframework.security: DEBUG
-
----
-spring:
-  config:
-    activate:
-      on-profile: prod
-  
-  datasource:
-    url: ${DATABASE_URL:jdbc:mysql://localhost:3306/matchday}
-    username: ${DATABASE_USERNAME:app}
-    password: ${DATABASE_PASSWORD:app}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-    show-sql: false
-  
-  security:
-    enabled: true
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health
-
-springdoc:
-  api-docs:
-    enabled: false
-  swagger-ui:
-    enabled: false
-
-logging:
-  level:
-    com.matchday: INFO
-    root: WARN
+jwt:
+  access-token:
+    secret-key: ${JWT_ACCESS_SECRET:matchday-access-secret-key-for-development-use-only-change-in-production}
+    expire-time: ${JWT_ACCESS_EXPIRE_TIME:3600000} # 1시간
+  refresh-token:
+    secret-key: ${JWT_REFRESH_SECRET:matchday-refresh-secret-key-for-development-use-only-change-in-production}
+    expire-time: ${JWT_REFRESH_EXPIRE_TIME:1209600000} # 2주

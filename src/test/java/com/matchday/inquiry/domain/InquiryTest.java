@@ -32,8 +32,8 @@ class InquiryTest {
         // then
         assertThat(inquiry.getTitle()).isEqualTo(title);
         assertThat(inquiry.getContent()).isEqualTo(content);
-        assertThat(inquiry.getPasswordHash()).isNotEqualTo(rawPassword); // 암호화됨
-        assertThat(inquiry.getPasswordHash()).startsWith("$2a$"); // BCrypt 해시
+        assertThat(inquiry.getPassword()).isNotEqualTo(rawPassword);
+        assertThat(inquiry.getPassword()).startsWith("$2a$"); // BCrypt 해시
         assertThat(inquiry.getStatus()).isEqualTo(Status.PENDING);
         assertThat(inquiry.hasAnswer()).isFalse();
     }

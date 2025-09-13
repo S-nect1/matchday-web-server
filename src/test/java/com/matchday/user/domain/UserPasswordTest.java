@@ -4,7 +4,7 @@ import com.matchday.global.entity.enums.City;
 import com.matchday.global.entity.enums.District;
 import com.matchday.team.domain.enums.Position;
 import com.matchday.user.domain.enums.Gender;
-import com.matchday.user.domain.enums.MemberRole;
+import com.matchday.user.domain.enums.UserRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ class UserPasswordTest {
         Integer height = 180;
         Gender gender = Gender.MALE;
         Position mainPosition = Position.FW;
-        MemberRole role = MemberRole.ROLE_MEMBER;
+        UserRole role = UserRole.ROLE_MEMBER;
         String phoneNumber = "010-1234-5678";
         City city = City.SEOUL;
         District district = District.SEOUL_GANGNAM;
@@ -61,7 +61,7 @@ class UserPasswordTest {
         String rawPassword = "password123";
         User user = User.createUser("test@example.com", rawPassword, "홍길동", 
                                   LocalDate.of(1990, 1, 1), 180, Gender.MALE,
-                                  Position.FW, MemberRole.ROLE_MEMBER, "010-1234-5678",
+                                  Position.FW, UserRole.ROLE_MEMBER, "010-1234-5678",
                                   City.SEOUL, District.SEOUL_GANGNAM, false, passwordEncoder);
 
         // when
@@ -79,7 +79,7 @@ class UserPasswordTest {
         String wrongPassword = "wrongpassword";
         User user = User.createUser("test@example.com", rawPassword, "홍길동", 
                                   LocalDate.of(1990, 1, 1), 180, Gender.MALE,
-                                  Position.FW, MemberRole.ROLE_MEMBER, "010-1234-5678",
+                                  Position.FW, UserRole.ROLE_MEMBER, "010-1234-5678",
                                   City.SEOUL, District.SEOUL_GANGNAM, false, passwordEncoder);
 
         // when
@@ -97,7 +97,7 @@ class UserPasswordTest {
         String newPassword = "newpassword";
         User user = User.createUser("test@example.com", oldPassword, "홍길동", 
                                   LocalDate.of(1990, 1, 1), 180, Gender.MALE,
-                                  Position.FW, MemberRole.ROLE_MEMBER, "010-1234-5678",
+                                  Position.FW, UserRole.ROLE_MEMBER, "010-1234-5678",
                                   City.SEOUL, District.SEOUL_GANGNAM, false, passwordEncoder);
         String oldPasswordHash = user.getPassword();
 

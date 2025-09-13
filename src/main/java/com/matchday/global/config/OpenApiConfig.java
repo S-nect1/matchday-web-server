@@ -34,20 +34,12 @@ public class OpenApiConfig {
                         .addSecuritySchemes("BearerAuth", bearerAuthScheme))
                 .addSecurityItem(securityRequirement);
     }
-    
-    @Bean
-    public GroupedOpenApi publicApi() {
-        return GroupedOpenApi.builder()
-                .group("matchday-api")
-                .pathsToMatch("/api/**")
-                .build();
-    }
 
-    private GroupedOpenApi buildGroupedOpenApi(String group, String basePackage) {
-        return GroupedOpenApi.builder()
-                .group(group)
+//    private GroupedOpenApi buildGroupedOpenApi(String group, String basePackage) {
+//        return GroupedOpenApi.builder()
+//                .group(group)
 //                .pathsToMatch("/api/v1/**")
-                .packagesToScan(basePackage)
-                .build();
-    }
+//                .packagesToScan(basePackage)
+//                .build();
+//    }
 }
