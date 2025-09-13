@@ -16,16 +16,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/teams")
 @RequiredArgsConstructor
-public class TeamUserController {
+public class TeamUserController implements TeamUserControllerDocs {
     
     private final TeamUserService teamUserService;
 
-    /** 초대코드로 팀 가입
-     *
-     * @param userId 유저 식별자(기본키)
-     * @param request 초대코드 (등번호 필요에 따라 추가)
-     * @return
-     */
     @PostMapping("/join")
     public BaseResponse<TeamUserResponse> joinTeam(
             @RequestHeader("User-Id") Long userId,
@@ -35,12 +29,6 @@ public class TeamUserController {
         return BaseResponse.onSuccess(response, ResponseCode.OK);
     }
 
-    /** 팀 탈퇴
-     *
-     * @param teamId 팀 식별자(기본키)
-     * @param userId 유저 식별자(기본키)
-     * @return
-     */
     @DeleteMapping("/{teamId}/members")
     public BaseResponse<String> leaveTeam(
             @PathVariable Long teamId,
@@ -50,22 +38,12 @@ public class TeamUserController {
         return BaseResponse.onSuccess("팀 탈퇴가 완료되었습니다.", ResponseCode.OK);
     }
 
-    /** 팀 멤버 목록 조회
-     *
-     * @param teamId 팀 식별자(기본키)
-     * @return
-     */
     @GetMapping("/{teamId}/members")
     public BaseResponse<List<TeamUserResponse>> getTeamMembers(@PathVariable Long teamId) {
         List<TeamUserResponse> response = teamUserService.getTeamMembers(teamId);
         return BaseResponse.onSuccess(response, ResponseCode.OK);
     }
 
-    /** 사용자가 가입한 팀 목록 조회
-     *
-     * @param userId 유저 식별자(기본키)
-     * @return
-     */
     @GetMapping("/my-teams")
     public BaseResponse<List<TeamResponse>> getMyTeams(
             @RequestHeader("User-Id") Long userId) {
@@ -74,14 +52,6 @@ public class TeamUserController {
         return BaseResponse.onSuccess(response, ResponseCode.OK);
     }
 
-    /** 멤버 역할 변경 (팀장만 가능)
-     *
-     * @param teamId 팀 식별자(기본키)
-     * @param targetUserId 대상 유저 식별자(기본키)
-     * @param role
-     * @param requestUserId
-     * @return
-     */
     @PatchMapping("/{teamId}/members/{targetUserId}/role")
     public BaseResponse<TeamUserResponse> updateMemberRole(
             @PathVariable Long teamId,
@@ -92,5 +62,15 @@ public class TeamUserController {
         TeamUserResponse response = teamUserService.updateMemberRole(
             teamId, targetUserId, role, requestUserId);
         return BaseResponse.onSuccess(response, ResponseCode.OK);
+    }
+
+    @DeleteMapping("/{teamId}/members/{targetUserId}")
+    public BaseResponse<String> kickMember(
+            @PathVariable Long teamId,
+            @PathVariable Long targetUserId,
+            @RequestHeader("User-Id") Long requestUserId
+    ) {
+        teamUserService.kickMember(requestUserId, targetUserId, teamId);
+        return BaseResponse.onSuccess("회원이 퇴출되었습니다.", ResponseCode.OK);
     }
 }

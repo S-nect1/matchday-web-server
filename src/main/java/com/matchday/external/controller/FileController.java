@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/files")
 @RequiredArgsConstructor
-public class FileController {
+public class FileController implements FileControllerDocs {
     
     private final StorageService storageService;
     
@@ -28,6 +28,7 @@ public class FileController {
     
     private static final long MAX_FILE_SIZE = 500 * 1024; // 500KB
     
+    @Override
     @PostMapping("/upload")
     public BaseResponse<FileUploadResponse> uploadFile(
             @RequestParam("file") MultipartFile file,
