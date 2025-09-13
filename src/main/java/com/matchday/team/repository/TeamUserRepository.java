@@ -21,10 +21,16 @@ public interface TeamUserRepository extends JpaRepository<TeamUser, Long> {
     
     // 팀과 사용자로 팀원 정보 조회
     Optional<TeamUser> findByTeamAndUser(Team team, User user);
-    
+
+    // 팀과 사용자로 팀원 정보 조회(id)
+    Optional<TeamUser> findByTeamIdAndUserId(Long teamId, Long userId);
+
     // 특정 팀의 특정 역할 팀원 조회
     List<TeamUser> findByTeamAndRole(Team team, TeamRole role);
-    
+
+    // 특정 팀의 특정 역할 팀원 조회(id)
+    List<TeamUser> findByTeamIdAndRole(Long teamId, TeamRole role);
+
     // 특정 팀의 리더 조회
     @Query("SELECT tu FROM TeamUser tu JOIN FETCH tu.user WHERE tu.team = :team AND tu.role = 'LEADER'")
     Optional<TeamUser> findLeaderByTeam(@Param("team") Team team);

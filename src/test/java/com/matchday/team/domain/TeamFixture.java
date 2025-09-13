@@ -57,4 +57,39 @@ public class TeamFixture {
             null
         );
     }
+    
+    public static Team createFootballTeam(String name) {
+        return Team.createTeam(
+            name,
+            "축구 팀",
+            TeamType.CLUB,
+            City.SEOUL,
+            District.SEOUL_GANGNAM,
+            "#FF0000",
+            true,
+            GroupGender.MIXED,
+            22,
+            "국민은행",
+            "123-456-789",
+            null
+        );
+    }
+    
+    public static Team createTeam(String name, City city, District district, 
+                                 TeamType type, GroupGender gender) {
+        return Team.createTeam(
+            name,
+            "테스트 팀",
+            type,
+            city,
+            district,
+            "#FF0000",
+            true,
+            gender,
+            20,
+            "국민은행",
+            "123-456-789",
+            null
+        );
+    }
 }

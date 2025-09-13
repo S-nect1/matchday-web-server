@@ -74,16 +74,7 @@ public class TeamUserService {
      */
     @Transactional
     public void leaveTeam(Long userId, Long teamId) {
-        // 사용자 조회
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new TeamControllerAdvice(ResponseCode.USER_NOT_FOUND));
-        
-        // 팀 조회
-        Team team = teamRepository.findById(teamId)
-            .orElseThrow(() -> new TeamControllerAdvice(ResponseCode.TEAM_NOT_FOUND));
-        
-        // 팀 멤버 조회
-        TeamUser teamUser = teamUserRepository.findByTeamAndUser(team, user)
+        TeamUser teamUser = teamUserRepository.findByTeamIdAndUserId(teamId, userId)
             .orElseThrow(() -> new TeamControllerAdvice(ResponseCode.TEAM_USER_NOT_FOUND));
         
         // 팀장은 탈퇴 불가 (팀을 삭제하거나 팀장을 위임해야 함)
@@ -140,28 +131,15 @@ public class TeamUserService {
      */
     @Transactional
     public TeamUserResponse updateMemberRole(Long teamId, Long targetUserId, TeamRole newRole, Long requestUserId) {
-        // 요청자 확인
-        User requestUser = userRepository.findById(requestUserId)
-            .orElseThrow(() -> new TeamControllerAdvice(ResponseCode.USER_NOT_FOUND));
-        
-        // 대상자 확인
-        User targetUser = userRepository.findById(targetUserId)
-            .orElseThrow(() -> new TeamControllerAdvice(ResponseCode.USER_NOT_FOUND));
-        
-        // 팀 조회
-        Team team = teamRepository.findById(teamId)
-            .orElseThrow(() -> new TeamControllerAdvice(ResponseCode.TEAM_NOT_FOUND));
-        
         // 요청자가 팀장인지 확인
-        TeamUser requestTeamUser = teamUserRepository.findByTeamAndUser(team, requestUser)
+        TeamUser requestTeamUser = teamUserRepository.findByTeamIdAndUserId(teamId, requestUserId)
             .orElseThrow(() -> new TeamControllerAdvice(ResponseCode.TEAM_USER_NOT_FOUND));
-        
-        if (requestTeamUser.getRole() != TeamRole.LEADER) {
+        if (!requestTeamUser.isLeader()) {
             throw new TeamControllerAdvice(ResponseCode._UNAUTHORIZED);
         }
-        
-        // 대상자 팀 멤버 조회
-        TeamUser targetTeamUser = teamUserRepository.findByTeamAndUser(team, targetUser)
+
+        // 대상 조회
+        TeamUser targetTeamUser = teamUserRepository.findByTeamIdAndUserId(teamId, targetUserId)
             .orElseThrow(() -> new TeamControllerAdvice(ResponseCode.TEAM_USER_NOT_FOUND));
         
         // 역할 변경
@@ -173,19 +151,22 @@ public class TeamUserService {
         
         return TeamUserResponse.from(updatedTeamUser);
     }
+
+    public void kickMember(Long requestUserId, Long targetUserId, Long teamId) {
+        validatePermission(teamId, requestUserId);
+
+        TeamUser teamUser = teamUserRepository.findByTeamIdAndUserId(teamId, targetUserId)
+                .orElseThrow(() -> new TeamControllerAdvice(ResponseCode.TEAM_USER_NOT_FOUND));
+
+        teamUserRepository.delete(teamUser);
+    }
     
     /**
-     * 운영진 권한 확인 TODO: 추후 시큐리티 컨텍스트로 권한 확인
+     * 운영진 권한 확인 TODO: 시큐리티 컨텍스트로 권한 확인할 수 있는 로직 생각해보기
      */
     public void validatePermission(Long teamId, Long userId) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new TeamControllerAdvice(ResponseCode.USER_NOT_FOUND));
-        
-        Team team = teamRepository.findById(teamId)
-            .orElseThrow(() -> new TeamControllerAdvice(ResponseCode.TEAM_NOT_FOUND));
-        
-        TeamUser teamUser = teamUserRepository.findByTeamAndUser(team, user)
-            .orElseThrow(() -> new TeamControllerAdvice(ResponseCode.TEAM_USER_NOT_FOUND));
+        TeamUser teamUser = teamUserRepository.findByTeamIdAndUserId(teamId, userId)
+                .orElseThrow(() -> new TeamControllerAdvice(ResponseCode.TEAM_USER_NOT_FOUND));
         
         // 권한 확인
         if (!teamUser.hasManagementAuthority()) {
