@@ -4,6 +4,7 @@ import com.matchday.global.entity.enums.City;
 import com.matchday.global.entity.enums.District;
 import com.matchday.team.domain.enums.GroupGender;
 import com.matchday.team.domain.enums.TeamType;
+import com.matchday.team.exception.advice.TeamControllerAdvice;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -57,7 +58,7 @@ class TeamTest {
                                                City.SEOUL, District.SEOUL_GANGNAM, "#FF0000", 
                                                true, GroupGender.MALE, 20, 
                                                "국민은행", "123-456-789", null))
-            .isInstanceOf(IllegalArgumentException.class)
+            .isInstanceOf(TeamControllerAdvice.class)
             .hasMessage("팀 이름은 필수입니다.");
     }
 
@@ -72,7 +73,7 @@ class TeamTest {
                                                City.SEOUL, District.SEOUL_GANGNAM, "#FF0000",
                                                true, GroupGender.MALE, 20,
                                                "국민은행", "123-456-789", null))
-            .isInstanceOf(IllegalArgumentException.class)
+            .isInstanceOf(TeamControllerAdvice.class)
             .hasMessage("팀 이름은 100자 이내여야 합니다.");
     }
 

@@ -79,6 +79,16 @@ public class TeamService {
     }
 
     /**
+     * 팀 상세 조회 (memberCount 포함)
+     */
+    public TeamResponse getTeamDetails(Long teamId) {
+        Team team = getTeam(teamId);
+        Integer memberCount = teamUserService.getMemberCount(teamId);
+        
+        return TeamResponse.from(team, memberCount);
+    }
+    
+    /**
      * 팀 목록 조회 (동적 검색 조건 적용)
      */
     public PagedResponse<TeamListResponse> getTeamList(TeamSearchRequest searchRequest) {
@@ -134,7 +144,8 @@ public class TeamService {
         
         log.info("팀 정보 수정 완료 - 팀: {}, 수정자: {}", teamId, requestUserId);
         
-        return TeamResponse.from(updatedTeam);
+        Integer memberCount = teamUserService.getMemberCount(teamId);
+        return TeamResponse.from(updatedTeam, memberCount);
     }
     
     /**

@@ -56,6 +56,9 @@ public class TeamListResponse {
     @Schema(description = "팀 생성일", example = "2024-01-15T10:30:00")
     private LocalDateTime createdAt;
 
+    @Schema(description = "현재 팀원 수", example = "15")
+    private Integer memberCount;
+
     public static TeamListResponse from(Team team) {
         return TeamListResponse.builder()
                 .id(team.getId())

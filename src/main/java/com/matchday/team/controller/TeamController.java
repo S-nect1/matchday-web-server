@@ -32,7 +32,7 @@ public class TeamController implements TeamControllerDocs {
 
     @GetMapping("/{teamId}")
     public BaseResponse<TeamResponse> getTeamDetails(@PathVariable Long teamId) {
-        TeamResponse response = TeamResponse.from(teamService.getTeam(teamId));
+        TeamResponse response = teamService.getTeamDetails(teamId);
         return BaseResponse.onSuccess(response, ResponseCode.OK);
     }
 
@@ -62,6 +62,7 @@ public class TeamController implements TeamControllerDocs {
             @RequestParam(required = false) TeamType type,
             @RequestParam(required = false) GroupGender gender,
             @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Integer ageGroup,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "createdAt") String sort,
@@ -74,6 +75,7 @@ public class TeamController implements TeamControllerDocs {
         searchRequest.setType(type);
         searchRequest.setGender(gender);
         searchRequest.setKeyword(StringUtils.hasText(keyword) ? keyword.trim() : null);
+        searchRequest.setAgeGroup(ageGroup);
         searchRequest.setPage(page);
         searchRequest.setSize(size);
         searchRequest.setSort(sort);

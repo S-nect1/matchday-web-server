@@ -7,9 +7,17 @@ import com.matchday.team.domain.Team;
 import com.matchday.team.domain.TeamFixture;
 import com.matchday.team.domain.enums.GroupGender;
 import com.matchday.team.domain.enums.TeamType;
+import com.matchday.team.domain.TeamUser;
+import com.matchday.team.domain.enums.TeamRole;
 import com.matchday.team.dto.request.TeamSearchRequest;
 import com.matchday.team.dto.response.TeamListResponse;
+import com.matchday.user.domain.User;
+import com.matchday.user.domain.enums.Gender;
+import com.matchday.team.domain.enums.Position;
+import com.matchday.user.domain.enums.UserRole;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,6 +31,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -235,39 +244,172 @@ class TeamQueryRepositoryImplTest {
         assertThat(result.getTotalPages()).isEqualTo(0);
     }
 
+    @Test
+    @DisplayName("팀 멤버 수가 정확하게 집계된다")
+    void findTeamsByConditions_returnsMemberCount() {
+        // given
+        TeamSearchRequest searchRequest = createSearchRequest(null, null, null, null, null);
+        Pageable pageable = PageRequest.of(0, 20);
+
+        // when
+        Page<TeamListResponse> result = teamQueryRepository.findTeamsByConditions(searchRequest, pageable);
+
+        // then
+        assertThat(result.getContent()).hasSize(6);
+        
+        // 각 팀의 memberCount가 설정되어 있는지 확인
+        for (TeamListResponse team : result.getContent()) {
+            assertThat(team.getMemberCount()).isNotNull();
+            assertThat(team.getMemberCount()).isGreaterThanOrEqualTo(0);
+        }
+        
+        // 특정 팀들의 멤버 수 확인 (setupTestData()에서 추가한 멤버 기준)
+        TeamListResponse gangnamFc = result.getContent().stream()
+            .filter(team -> "Gangnam FC".equals(team.getName()))
+            .findFirst()
+            .orElseThrow();
+        assertThat(gangnamFc.getMemberCount()).isEqualTo(3); // 팀장 + 멤버 2명
+        
+        TeamListResponse gangseoTeam = result.getContent().stream()
+            .filter(team -> "Gangseo Team".equals(team.getName()))
+            .findFirst()
+            .orElseThrow();
+        assertThat(gangseoTeam.getMemberCount()).isEqualTo(1); // 팀장만
+    }
+
+    @Test
+    @DisplayName("20대 연령대 필터로 팀 조회")
+    void findTeamsByConditions_withAgeGroupFilter_returns20sTeams() {
+        // given
+        TeamSearchRequest searchRequest = createSearchRequest(null, null, null, null, null);
+        searchRequest.setAgeGroup(20);
+        Pageable pageable = PageRequest.of(0, 20);
+
+        // when
+        Page<TeamListResponse> result = teamQueryRepository.findTeamsByConditions(searchRequest, pageable);
+
+        // then
+        // 평균 나이가 20대인 팀만 필터링됨 (Gangnam FC: 26세, Songpa FC: 22세)
+        assertThat(result.getContent()).hasSize(2); // Gangnam FC, Songpa FC
+        
+        List<String> teamNames = result.getContent().stream()
+            .map(TeamListResponse::getName)
+            .toList();
+        assertThat(teamNames).containsExactlyInAnyOrder("Gangnam FC", "Songpa FC");
+    }
+
+    @Test
+    @DisplayName("30대 연령대 필터로 팀 조회")
+    void findTeamsByConditions_withAgeGroupFilter_returns30sTeams() {
+        // given
+        TeamSearchRequest searchRequest = createSearchRequest(null, null, null, null, null);
+        searchRequest.setAgeGroup(30);
+        Pageable pageable = PageRequest.of(0, 20);
+
+        // when
+        Page<TeamListResponse> result = teamQueryRepository.findTeamsByConditions(searchRequest, pageable);
+
+        // then
+        // 평균 나이가 30대인 팀은 없음 (Gangnam FC: 26세, Gangseo Team: 42세, Songpa FC: 22세)
+        assertThat(result.getContent()).hasSize(0);
+    }
+
+    @Test
+    @DisplayName("연령대 필터와 다른 조건을 함께 적용")
+    void findTeamsByConditions_withAgeGroupAndOtherFilters() {
+        // given
+        TeamSearchRequest searchRequest = createSearchRequest(
+            City.SEOUL, null, TeamType.CLUB, null, null
+        );
+        searchRequest.setAgeGroup(20); // 20대 필터 추가
+        Pageable pageable = PageRequest.of(0, 20);
+
+        // when
+        Page<TeamListResponse> result = teamQueryRepository.findTeamsByConditions(searchRequest, pageable);
+
+        // then
+        // 서울의 CLUB 팀 중에서 20대 멤버가 있는 팀
+        assertThat(result.getContent()).hasSize(2); // Gangnam FC, Songpa FC
+        
+        for (TeamListResponse team : result.getContent()) {
+            assertThat(team.getCity()).isEqualTo(City.SEOUL);
+            assertThat(team.getType()).isEqualTo(TeamType.CLUB);
+            assertThat(team.getMemberCount()).isGreaterThan(0);
+        }
+    }
+
     private void setupTestData() {
-        // 서울 강남 FC CLUB MIXED
+        // 사용자 생성
+        User user20s1 = createUser("user20s1@test.com", LocalDate.of(2000, 5, 15)); // 24세
+        User user20s2 = createUser("user20s2@test.com", LocalDate.of(1999, 8, 20)); // 25세
+        User user30s = createUser("user30s@test.com", LocalDate.of(1990, 3, 10)); // 34세
+        User user40s = createUser("user40s@test.com", LocalDate.of(1980, 12, 5)); // 44세
+        
+        entityManager.persist(user20s1);
+        entityManager.persist(user20s2);
+        entityManager.persist(user30s);
+        entityManager.persist(user40s);
+        
+        // 팀 생성
         Team team1 = TeamFixture.createTeam("Gangnam FC", City.SEOUL, District.SEOUL_GANGNAM, 
                                           TeamType.CLUB, GroupGender.MIXED);
-        entityManager.persist(team1);
-        
-        // 서울 강서 SMALL_GROUP MALE
         Team team2 = TeamFixture.createTeam("Gangseo Team", City.SEOUL, District.SEOUL_GANGSEO, 
                                           TeamType.SMALL_GROUP, GroupGender.MALE);
-        entityManager.persist(team2);
-        
-        // 서울 송파 CLUB FEMALE
         Team team3 = TeamFixture.createTeam("Songpa FC", City.SEOUL, District.SEOUL_SONGPA, 
                                           TeamType.CLUB, GroupGender.FEMALE);
-        entityManager.persist(team3);
-        
-        // 부산 해운대 CLUB MIXED
         Team team4 = TeamFixture.createTeam("Haeundae FC", City.BUSAN, District.BUSAN_HAEUNDAE, 
                                           TeamType.CLUB, GroupGender.MIXED);
-        entityManager.persist(team4);
-        
-        // 부산 사하 COMMUNITY MALE
         Team team5 = TeamFixture.createTeam("Saha Community", City.BUSAN, District.BUSAN_SAHA, 
                                           TeamType.COMMUNITY, GroupGender.MALE);
-        entityManager.persist(team5);
-        
-        // 대구 중구 SMALL_GROUP FEMALE
         Team team6 = TeamFixture.createTeam("Daegu Central", City.DAEGU, District.DAEGU_JUNG, 
                                           TeamType.SMALL_GROUP, GroupGender.FEMALE);
+        
+        entityManager.persist(team1);
+        entityManager.persist(team2);
+        entityManager.persist(team3);
+        entityManager.persist(team4);
+        entityManager.persist(team5);
         entityManager.persist(team6);
+        
+        // 팀원 추가
+        // Gangnam FC: 20대 2명 + 30대 1명 = 총 3명
+        TeamUser teamUser1_1 = TeamUser.createLeader(team1, user20s1); // 팀장
+        TeamUser teamUser1_2 = TeamUser.joinTeamWithBackNumber(team1, user20s2, TeamRole.MEMBER, 10);
+        TeamUser teamUser1_3 = TeamUser.joinTeamWithBackNumber(team1, user30s, TeamRole.MEMBER, 11);
+        
+        // Gangseo Team: 40대 1명 = 총 1명
+        TeamUser teamUser2_1 = TeamUser.createLeader(team2, user40s); // 팀장만
+        
+        // Songpa FC: 20대 1명 = 총 1명  
+        TeamUser teamUser3_1 = TeamUser.createLeader(team3, user20s1); // 다른 팀 소속도 가능하다고 가정
+        
+        entityManager.persist(teamUser1_1);
+        entityManager.persist(teamUser1_2);
+        entityManager.persist(teamUser1_3);
+        entityManager.persist(teamUser2_1);
+        entityManager.persist(teamUser3_1);
         
         entityManager.flush();
         entityManager.clear();
+    }
+    
+    private User createUser(String email, LocalDate birth) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        return User.createUser(
+            email,
+            "password",
+            "TestUser",
+            birth,
+            170,
+            Gender.MALE,
+            Position.MF,
+            UserRole.ROLE_MEMBER,
+            "010-1234-5678",
+            City.SEOUL,
+            District.SEOUL_GANGNAM,
+            false,
+            passwordEncoder
+        );
     }
 
     private TeamSearchRequest createSearchRequest(City city, District district, TeamType type, 

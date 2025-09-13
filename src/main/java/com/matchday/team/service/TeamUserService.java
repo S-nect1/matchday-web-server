@@ -29,6 +29,10 @@ public class TeamUserService {
     private final TeamUserRepository teamUserRepository;
     private final UserRepository userRepository;
     
+    public Integer getMemberCount(Long teamId) {
+        return teamUserRepository.countByTeamId(teamId);
+    }
+    
     /**
      * 초대코드로 팀 가입
      */
@@ -109,7 +113,11 @@ public class TeamUserService {
         
         List<TeamUser> teamUsers = teamUserRepository.findByUser(user);
         return teamUsers.stream()
-            .map(teamUser -> TeamResponse.from(teamUser.getTeam()))
+            .map(teamUser -> {
+                Team team = teamUser.getTeam();
+                Integer memberCount = getMemberCount(team.getId());
+                return TeamResponse.from(team, memberCount);
+            })
             .toList();
     }
     

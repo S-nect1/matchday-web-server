@@ -100,6 +100,9 @@ public interface TeamControllerDocs {
         @Parameter(description = "팀명 검색 키워드", example = "FC") 
         @RequestParam(required = false) String keyword,
         
+        @Parameter(description = "연령대 필터", example = "20")
+        @RequestParam(required = false) Integer ageGroup,
+        
         @Parameter(description = "페이지 번호", example = "0") 
         @RequestParam(defaultValue = "0") int page,
         

@@ -6,14 +6,17 @@ import com.matchday.team.domain.QTeam;
 import com.matchday.team.domain.Team;
 import com.matchday.team.domain.enums.GroupGender;
 import com.matchday.team.domain.enums.TeamType;
+import com.matchday.team.domain.QTeamUser;
 import com.matchday.team.dto.request.TeamSearchRequest;
 import com.matchday.team.dto.response.TeamListResponse;
+import com.matchday.user.domain.QUser;
 import com.matchday.user.domain.enums.Gender;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +38,8 @@ public class TeamQueryRepositoryImpl implements TeamQueryRepository {
 
     private final JPAQueryFactory queryFactory;
     private final QTeam team = QTeam.team;
+    private final QTeamUser teamUser = QTeamUser.teamUser;
+    private final QUser user = QUser.user;
 
     @Override
     @Transactional(readOnly = true)
@@ -48,7 +53,12 @@ public class TeamQueryRepositoryImpl implements TeamQueryRepository {
         // pageable의 Sort가 있으면 우선 적용, 없으면 req의 sort/direction 사용
         OrderSpecifier<?>[] orderSpecifiers = orderSpecifiersFrom(req, pageable);
 
-        // 내용 쿼리
+        if (req.getAgeGroup() != null) {
+            // 연령대 필터링이 있는 경우: 서브쿼리로 평균 나이 기준 팀 ID 먼저 조회
+            return findTeamsByConditionsWithAgeGroup(req, pageable, city, district, type, gender, keyword, orderSpecifiers);
+        }
+
+        // 연령대 필터링이 없는 경우: 기본 쿼리
         List<TeamListResponse> content = queryFactory
                 .select(Projections.fields(TeamListResponse.class,
                         team.id.as("id"),
@@ -62,10 +72,15 @@ public class TeamQueryRepositoryImpl implements TeamQueryRepository {
                         team.memberLimit.as("memberLimit"),
                         team.hasBall.as("hasBall"),
                         team.profileImageUrl.as("profileImageUrl"),
-                        team.createdDate.as("createdAt")
+                        team.createdDate.as("createdAt"),
+                        teamUser.countDistinct().intValue().as("memberCount")
                 ))
                 .from(team)
+                .leftJoin(teamUser).on(teamUser.team.eq(team))
                 .where(city, district, type, gender, keyword)
+                .groupBy(team.id, team.name, team.description, team.type, team.city, 
+                         team.district, team.gender, team.uniformColorHex, team.memberLimit, 
+                         team.hasBall, team.profileImageUrl, team.createdDate)
                 .orderBy(orderSpecifiers)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -73,11 +88,10 @@ public class TeamQueryRepositoryImpl implements TeamQueryRepository {
 
         // 카운트 쿼리
         JPAQuery<Long> countQuery = queryFactory
-                .select(team.count())
+                .select(team.countDistinct())
                 .from(team)
                 .where(city, district, type, gender, keyword);
 
-        // 5) PageableExecutionUtils: 마지막 페이지에서 불필요한 카운트 호출을 지연/스킵
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
@@ -137,5 +151,64 @@ public class TeamQueryRepositoryImpl implements TeamQueryRepository {
             case "createdAt" -> asc ? team.createdDate.asc() : team.createdDate.desc();
             default -> null;
         };
+    }
+
+    private Page<TeamListResponse> findTeamsByConditionsWithAgeGroup(
+            TeamSearchRequest req, Pageable pageable, 
+            BooleanExpression city, BooleanExpression district, BooleanExpression type, 
+            BooleanExpression gender, BooleanExpression keyword, OrderSpecifier<?>[] orderSpecifiers) {
+        
+        // 평균 나이가 해당 연령대에 속하는 팀 ID 조회
+        int minAge = req.getAgeGroup();
+        int maxAge = req.getAgeGroup() + 9;
+        
+        List<Long> teamIds = queryFactory
+                .select(teamUser.team.id)
+                .from(teamUser)
+                .join(user).on(teamUser.user.eq(user))
+                .join(team).on(teamUser.team.eq(team))
+                .where(city, district, type, gender, keyword)
+                .groupBy(teamUser.team.id)
+                .having(Expressions.numberTemplate(Double.class, 
+                        "AVG(YEAR(CURDATE()) - YEAR({0}))", user.birth)
+                        .between(minAge, maxAge))
+                .fetch();
+
+        if (teamIds.isEmpty()) {
+            return new PageImpl<>(new ArrayList<>(), pageable, 0);
+        }
+
+        // 조건에 맞는 팀들의 상세 정보 조회
+        List<TeamListResponse> content = queryFactory
+                .select(Projections.fields(TeamListResponse.class,
+                        team.id.as("id"),
+                        team.name.as("name"),
+                        team.description.as("description"),
+                        team.type.as("type"),
+                        team.city.as("city"),
+                        team.district.as("district"),
+                        team.gender.as("gender"),
+                        team.uniformColorHex.as("uniformColorHex"),
+                        team.memberLimit.as("memberLimit"),
+                        team.hasBall.as("hasBall"),
+                        team.profileImageUrl.as("profileImageUrl"),
+                        team.createdDate.as("createdAt"),
+                        teamUser.countDistinct().intValue().as("memberCount")
+                ))
+                .from(team)
+                .leftJoin(teamUser).on(teamUser.team.eq(team))
+                .where(team.id.in(teamIds))
+                .groupBy(team.id, team.name, team.description, team.type, team.city, 
+                         team.district, team.gender, team.uniformColorHex, team.memberLimit, 
+                         team.hasBall, team.profileImageUrl, team.createdDate)
+                .orderBy(orderSpecifiers)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        // 3단계: 카운트 쿼리 (총 개수)
+        long total = teamIds.size();
+        
+        return new PageImpl<>(content, pageable, total);
     }
 }

@@ -20,9 +20,10 @@ public record TeamResponse(
     String inviteCode,
     String bankName,
     String bankAccount,
-    String profileImageUrl
+    String profileImageUrl,
+    Integer memberCount
 ) {
-    public static TeamResponse from(Team team) {
+    public static TeamResponse from(Team team, Integer memberCount) {
         return new TeamResponse(
             team.getId(),
             team.getName(),
@@ -37,7 +38,8 @@ public record TeamResponse(
             team.getInviteCode(),
             team.getBankName(),
             team.getBankAccount(),
-            team.getProfileImageUrl()
+            team.getProfileImageUrl(),
+            memberCount
         );
     }
 }

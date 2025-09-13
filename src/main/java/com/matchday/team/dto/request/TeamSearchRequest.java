@@ -34,6 +34,9 @@ public class TeamSearchRequest {
     @Schema(description = "팀명 검색 키워드", example = "FC")
     private String keyword;
 
+    @Schema(description = "연령대 필터", example = "20", allowableValues = {"20", "30", "40", "50", "60"})
+    private Integer ageGroup;
+
     @Schema(description = "페이지 번호", example = "0", defaultValue = "0")
     @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다")
     private int page = 0;

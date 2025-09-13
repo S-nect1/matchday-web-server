@@ -38,6 +38,9 @@ public interface TeamUserRepository extends JpaRepository<TeamUser, Long> {
     // 팀원 수 조회
     long countByTeam(Team team);
     
+    // 팀원 수 조회 (ID로)
+    Integer countByTeamId(Long teamId);
+    
     // 특정 팀에서 등번호 중복 확인
     boolean existsByTeamAndBackNumber(Team team, Integer backNumber);
     
