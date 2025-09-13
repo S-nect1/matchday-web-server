@@ -1,9 +1,12 @@
 package com.matchday.team.service;
 
+import com.matchday.global.dto.response.PagedResponse;
 import com.matchday.global.entity.enums.ResponseCode;
 import com.matchday.team.domain.Team;
 import com.matchday.team.dto.request.TeamCreateRequest;
+import com.matchday.team.dto.request.TeamSearchRequest;
 import com.matchday.team.dto.request.TeamUpdateRequest;
+import com.matchday.team.dto.response.TeamListResponse;
 import com.matchday.team.dto.response.TeamResponse;
 import com.matchday.team.exception.advice.TeamControllerAdvice;
 import com.matchday.team.repository.TeamRepository;
@@ -11,6 +14,9 @@ import com.matchday.user.domain.User;
 import com.matchday.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,6 +76,22 @@ public class TeamService {
 
         return teamRepository.findById(teamId)
             .orElseThrow(() -> new TeamControllerAdvice(ResponseCode.TEAM_NOT_FOUND));
+    }
+
+    /**
+     * 팀 목록 조회 (동적 검색 조건 적용)
+     */
+    public PagedResponse<TeamListResponse> getTeamList(TeamSearchRequest searchRequest) {
+        Pageable pageable = PageRequest.of(
+            searchRequest.getPage(), 
+            searchRequest.getSize()
+        );
+        
+        Page<TeamListResponse> teamsPage = teamRepository.findTeamsByConditions(searchRequest, pageable);
+        
+        log.info("팀 목록 조회 완료 - 조건: {}, 결과: {}개", searchRequest, teamsPage.getTotalElements());
+        
+        return PagedResponse.of(teamsPage);
     }
     
     /**
