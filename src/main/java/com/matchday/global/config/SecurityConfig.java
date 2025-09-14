@@ -1,12 +1,14 @@
 package com.matchday.global.config;
 
-import com.matchday.global.security.CustomAuthenticationFilter;
+import com.matchday.auth.filter.JwtAuthenticationFilter;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -14,13 +16,14 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private static final String TEST_ENDPOINT = "/**";
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    private final CustomAuthenticationFilter customAuthenticationFilter;
+    private static final String TEST_ENDPOINT = "/**";
 
     @Value("${spring.profiles.active:dev}")
     private String activeProfile;
@@ -32,15 +35,19 @@ public class SecurityConfig {
                 .cors(cors -> cors.configure(http))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(this::configureAuthorization);
-//                .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+    
     private void configureAuthorization(
             AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize)
     {
+        // 인증 없이 접근 가능한 엔드포인트
         authorize
                 .requestMatchers(TEST_ENDPOINT).permitAll();
+//                .requestMatchers("/api/auth/**").permitAll()
+//                .requestMatchers("/actuator/health").permitAll();
 
         if ("prod".equals(activeProfile)) {
             authorize
@@ -57,7 +64,9 @@ public class SecurityConfig {
                             "/swagger-ui.html"
                     ).permitAll();
         }
-        authorize.anyRequest().authenticated(); // 기타 모든 요청은 인증 필요
+
+        // 그 외 모든 엔드포인트는 인증 필요
+        authorize.anyRequest().authenticated();
     }
 
 }
