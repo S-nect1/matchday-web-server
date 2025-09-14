@@ -41,7 +41,7 @@ public class TeamUserService {
         // 사용자 조회
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new TeamControllerAdvice(ResponseCode.USER_NOT_FOUND));
-        Integer backNumber = user.getBackNumber();
+//        Integer backNumber = user.getBackNumber();
 
         // 초대코드로 팀 조회
         Team team = teamRepository.findByInviteCode(request.inviteCode())
@@ -58,17 +58,17 @@ public class TeamUserService {
             throw new TeamControllerAdvice(ResponseCode.TEAM_LIMIT);
         }
         
-        // 등번호 중복 확인
-        if (teamUserRepository.existsByTeamAndBackNumber(team, backNumber)) {
-            throw new TeamControllerAdvice(ResponseCode.BACK_NUMBER_ALREADY_EXIST);
-        }
+        // 등번호 중복 확인 -> 이거 필요한건가?
+//        if (teamUserRepository.existsByTeamAndBackNumber(team, backNumber)) {
+//            throw new TeamControllerAdvice(ResponseCode.BACK_NUMBER_ALREADY_EXIST);
+//        }
         
         // 팀 가입
-        TeamUser teamUser = TeamUser.joinTeamWithBackNumber(team, user, TeamRole.MEMBER, backNumber);
+        TeamUser teamUser = TeamUser.joinTeam(team, user, TeamRole.MEMBER);
         TeamUser savedTeamUser = teamUserRepository.save(teamUser);
         
-        log.info("팀 가입 완료 - 사용자: {}, 팀: {}, 등번호: {}", 
-                userId, team.getId(), backNumber);
+        log.info("팀 가입 완료 - 사용자: {}, 팀: {}",
+                userId, team.getId());
         
         return TeamUserResponse.from(savedTeamUser);
     }
@@ -122,20 +122,19 @@ public class TeamUserService {
     }
     
     /**
-     * 팀장으로 멤버 추가 (내부용)
+     * 팀장으로 멤버 추가 (처음 팀 만들 때 사용)
      */
     @Transactional
-    public TeamUser addTeamLeader(Team team, User user) {
+    public void addTeamLeader(Team team, User user) {
         TeamUser teamLeader = TeamUser.createLeader(team, user);
-        TeamUser savedTeamLeader = teamUserRepository.save(teamLeader);
+        teamUserRepository.save(teamLeader);
         
-        log.info("팀장 추가 완료 - 사용자: {}, 팀: {}", user.getId(), team.getId());
-        
-        return savedTeamLeader;
+        log.info("팀 생성 및 팀장 설정 완료 - 사용자: {}, 팀: {}", user.getId(), team.getId());
     }
     
     /**
      * 멤버 역할 변경(팀장만 가능)
+     * 대상자를 팀장으로 변경하는 경우 본인은 일반 멤버로 강등됨
      */
     @Transactional
     public TeamUserResponse updateMemberRole(Long teamId, Long targetUserId, TeamRole newRole, Long requestUserId) {
@@ -149,6 +148,16 @@ public class TeamUserService {
         // 대상 조회
         TeamUser targetTeamUser = teamUserRepository.findByTeamIdAndUserId(teamId, targetUserId)
             .orElseThrow(() -> new TeamControllerAdvice(ResponseCode.TEAM_USER_NOT_FOUND));
+        
+        // 팀장 권한을 위임하는 경우
+        if (newRole == TeamRole.LEADER) {
+            // 기존 팀장을 일반 멤버로 변경
+            requestTeamUser.changeRole(TeamRole.MEMBER);
+            teamUserRepository.save(requestTeamUser);
+            
+            log.info("팀장 권한 위임으로 인한 강등 - 팀: {}, 기존 팀장: {} -> MEMBER", 
+                    teamId, requestUserId);
+        }
         
         // 역할 변경
         targetTeamUser.changeRole(newRole);
@@ -170,7 +179,7 @@ public class TeamUserService {
     }
     
     /**
-     * 운영진 권한 확인 TODO: 시큐리티 컨텍스트로 권한 확인할 수 있는 로직 생각해보기
+     * 운영진 권한 확인(운영진 or 팀장) TODO: 시큐리티 컨텍스트로 권한 확인할 수 있는 로직 생각해보기
      */
     public void validatePermission(Long teamId, Long userId) {
         TeamUser teamUser = teamUserRepository.findByTeamIdAndUserId(teamId, userId)

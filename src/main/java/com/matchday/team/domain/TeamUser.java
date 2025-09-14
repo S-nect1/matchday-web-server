@@ -35,10 +35,11 @@ public class TeamUser extends BaseEntity {
     @Column(nullable = false)
     private TeamRole role;
 
+    // FIXME: 기획에 따라서 수정될 수 있음
     @Column(name = "back_number")
     private Integer backNumber;
 
-    // 팀원 가입 정적 팩토리 메서드 (등번호 입력)
+    // 팀원 가입 정적 팩토리 메서드 (등번호 입력) - 테스트에서 사용
     public static TeamUser joinTeamWithBackNumber(Team team, User user, TeamRole role, Integer backNumber) {
         validateJoinTeam(team, user, role);
         
@@ -65,7 +66,7 @@ public class TeamUser extends BaseEntity {
 
     // 팀장으로 팀 생성 시 사용
     public static TeamUser createLeader(Team team, User user) {
-        return joinTeamWithBackNumber(team, user, TeamRole.LEADER, user.getBackNumber());
+        return joinTeam(team, user, TeamRole.LEADER);
     }
 
     // 권한 변경
