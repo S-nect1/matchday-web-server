@@ -1,8 +1,10 @@
 package com.matchday.match.domain;
 
-import com.matchday.match.domain.enums.MatchApplicationStatus;
-import com.matchday.match.exception.advice.MatchControllerAdvice;
-import com.matchday.team.domain.Team;
+import com.matchday.modules.match.domain.Match;
+import com.matchday.modules.match.domain.MatchApplication;
+import com.matchday.modules.match.domain.enums.MatchApplicationStatus;
+import com.matchday.modules.match.exception.MatchControllerAdvice;
+import com.matchday.modules.team.domain.Team;
 import com.matchday.team.domain.TeamFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

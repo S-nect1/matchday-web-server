@@ -1,6 +1,7 @@
 package com.matchday.inquiry.domain;
 
-import com.matchday.inquiry.domain.enums.Status;
+import com.matchday.modules.inquiry.domain.Inquiry;
+import com.matchday.modules.inquiry.domain.enums.Status;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

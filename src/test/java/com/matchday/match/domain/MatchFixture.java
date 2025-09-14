@@ -1,10 +1,11 @@
 package com.matchday.match.domain;
 
-import com.matchday.global.entity.enums.City;
-import com.matchday.global.entity.enums.District;
-import com.matchday.match.domain.enums.MatchSize;
-import com.matchday.match.domain.enums.SportsType;
-import com.matchday.team.domain.Team;
+import com.matchday.common.entity.enums.City;
+import com.matchday.common.entity.enums.District;
+import com.matchday.modules.match.domain.Match;
+import com.matchday.modules.match.domain.enums.MatchSize;
+import com.matchday.modules.match.domain.enums.SportsType;
+import com.matchday.modules.team.domain.Team;
 import com.matchday.team.domain.TeamFixture;
 
 import java.time.LocalDate;
