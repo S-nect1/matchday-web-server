@@ -54,6 +54,7 @@ public enum ResponseCode {
     LOGIN_SUCCESS(HttpStatus.OK, "AUTH001", "로그인에 성공했습니다."),
     LOGOUT_SUCCESS(HttpStatus.OK, "AUTH002", "로그아웃에 성공했습니다."),
     TOKEN_REFRESH_SUCCESS(HttpStatus.OK, "AUTH003", "토큰 갱신에 성공했습니다."),
+    REGISTER_SUCCESS(HttpStatus.CREATED, "AUTH004", "회원가입에 성공했습니다."),
     
     // Auth Error
     EMAIL_NOT_FOUND(HttpStatus.BAD_REQUEST, "AUTH4001", "존재하지 않는 이메일입니다."),

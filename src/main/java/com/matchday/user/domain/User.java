@@ -23,7 +23,7 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
     @Column(nullable = false)
     private String password;
@@ -92,5 +92,17 @@ public class User extends BaseEntity {
 
     public boolean matchesPassword(String rawPassword, PasswordEncoder passwordEncoder) {
         return passwordEncoder.matches(rawPassword, this.password);
+    }
+    
+    public void updateWeight(Integer weight) {
+        this.weight = weight;
+    }
+    
+    public void updateSubPosition(Position subPosition) {
+        this.subPosition = subPosition;
+    }
+    
+    public void updateDescription(String description) {
+        this.description = description;
     }
 }
