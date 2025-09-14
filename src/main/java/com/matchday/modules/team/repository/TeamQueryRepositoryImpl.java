@@ -2,13 +2,13 @@ package com.matchday.modules.team.repository;
 
 import com.matchday.common.entity.enums.City;
 import com.matchday.common.entity.enums.District;
-import com.matchday.team.domain.QTeam;
+import com.matchday.modules.team.domain.QTeam;
 import com.matchday.modules.team.domain.enums.GroupGender;
 import com.matchday.modules.team.domain.enums.TeamType;
-import com.matchday.team.domain.QTeamUser;
+import com.matchday.modules.team.domain.QTeamUser;
 import com.matchday.modules.team.dto.request.TeamSearchRequest;
 import com.matchday.modules.team.dto.response.TeamListResponse;
-import com.matchday.user.domain.QUser;
+import com.matchday.modules.user.domain.QUser;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;

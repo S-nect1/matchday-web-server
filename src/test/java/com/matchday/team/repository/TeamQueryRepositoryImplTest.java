@@ -396,9 +396,10 @@ class TeamQueryRepositoryImplTest {
     
     private User createUser(String email, LocalDate birth) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
         return User.createUser(
             email,
-            "password",
+            passwordEncoder.encode("password"),
             "TestUser",
             birth,
             170,
@@ -408,8 +409,7 @@ class TeamQueryRepositoryImplTest {
             "010-1234-5678",
             City.SEOUL,
             District.SEOUL_GANGNAM,
-            false,
-            passwordEncoder
+            false
         );
     }
 

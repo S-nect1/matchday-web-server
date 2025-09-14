@@ -40,7 +40,7 @@ class TeamUserTest {
         user = User.createUser("test@example.com", "password", "테스트유저",
                               LocalDate.of(1990, 1, 1), 180, Gender.MALE,
                               Position.MF, UserRole.ROLE_MEMBER, "010-1234-5678",
-                              City.SEOUL, District.SEOUL_GANGNAM, false, passwordEncoder);
+                              City.SEOUL, District.SEOUL_GANGNAM, false);
     }
 
     @Test

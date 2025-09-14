@@ -59,10 +59,13 @@ class AuthServiceRegisterTest {
         // given
         given(userRepository.findByEmail(registerRequest.getEmail())).willReturn(Optional.empty());
         given(passwordEncoder.encode(registerRequest.getPassword())).willReturn("encodedPassword");
-        
-        User savedUser = createUser();
-        ReflectionTestUtils.setField(savedUser, "id", 1L);
-        given(userRepository.save(any(User.class))).willReturn(savedUser);
+
+        given(userRepository.save(any(User.class)))
+                .willAnswer(invocation -> {
+                    User u = invocation.getArgument(0);
+                    ReflectionTestUtils.setField(u, "id", 1L);
+                    return u;
+                });
         
         // when
         RegisterResponse response = authService.register(registerRequest);
@@ -129,11 +132,11 @@ class AuthServiceRegisterTest {
         ReflectionTestUtils.setField(request, "name", "홍길동");
         ReflectionTestUtils.setField(request, "birth", LocalDate.of(1990, 1, 1));
         ReflectionTestUtils.setField(request, "height", 175);
-        ReflectionTestUtils.setField(request, "gender", Gender.M);
+        ReflectionTestUtils.setField(request, "gender", Gender.MALE);
         ReflectionTestUtils.setField(request, "mainPosition", Position.FW);
         ReflectionTestUtils.setField(request, "phoneNumber", "010-1234-5678");
         ReflectionTestUtils.setField(request, "city", City.SEOUL);
-        ReflectionTestUtils.setField(request, "district", District.GANGNAM);
+        ReflectionTestUtils.setField(request, "district", District.SEOUL_GANGNAM);
         ReflectionTestUtils.setField(request, "isProfessional", false);
         return request;
     }
@@ -153,14 +156,13 @@ class AuthServiceRegisterTest {
             "홍길동",
             LocalDate.of(1990, 1, 1),
             175,
-            Gender.M,
+            Gender.MALE,
             Position.FW,
             UserRole.ROLE_MEMBER,
             "010-1234-5678",
             City.SEOUL,
-            District.GANGNAM,
-            false,
-            passwordEncoder
+            District.SEOUL_GANGNAM,
+            false
         );
     }
 }

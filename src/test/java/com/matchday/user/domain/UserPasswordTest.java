@@ -6,24 +6,39 @@ import com.matchday.modules.team.domain.enums.Position;
 import com.matchday.modules.user.domain.User;
 import com.matchday.modules.user.domain.enums.Gender;
 import com.matchday.modules.user.domain.enums.UserRole;
+import com.matchday.modules.user.repository.UserRepository;
+import com.matchday.security.auth.auth.service.AuthService;
+import com.matchday.security.utils.TokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
 
+@ExtendWith(MockitoExtension.class)
 class UserPasswordTest {
 
+    @Mock
     private PasswordEncoder passwordEncoder;
 
-    @BeforeEach
-    void setUp() {
-        passwordEncoder = new BCryptPasswordEncoder();
-    }
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private TokenProvider tokenProvider;
+
+    @InjectMocks
+    private AuthService authService;
 
     @Test
     @DisplayName("사용자 생성 시 비밀번호가 암호화되어 저장된다")
@@ -43,14 +58,14 @@ class UserPasswordTest {
         Boolean isProfessional = false;
 
         // when
-        User user = User.createUser(email, rawPassword, name, birth, height, gender,
+        User user = User.createUser(email, passwordEncoder.encode(rawPassword), name, birth, height, gender,
                                   mainPosition, role, phoneNumber, city, district, 
-                                  isProfessional, passwordEncoder);
+                                  isProfessional);
 
         // then
         assertThat(user.getEmail()).isEqualTo(email);
         assertThat(user.getPassword()).isNotEqualTo(rawPassword); // 암호화됨
-        assertThat(user.getPassword()).startsWith("$2a$"); // BCrypt 해시
+        assertThat(user.getPassword()).isEqualTo(passwordEncoder.encode(rawPassword));
         assertThat(user.getName()).isEqualTo(name);
         assertThat(user.getBirth()).isEqualTo(birth);
     }
@@ -60,13 +75,15 @@ class UserPasswordTest {
     void matchesPassword_WithCorrectPassword_ShouldReturnTrue() {
         // given
         String rawPassword = "password123";
-        User user = User.createUser("test@example.com", rawPassword, "홍길동", 
+        String encodedPassword = passwordEncoder.encode(rawPassword);
+        User user = User.createUser("test@example.com", encodedPassword, "홍길동",
                                   LocalDate.of(1990, 1, 1), 180, Gender.MALE,
                                   Position.FW, UserRole.ROLE_MEMBER, "010-1234-5678",
-                                  City.SEOUL, District.SEOUL_GANGNAM, false, passwordEncoder);
+                                  City.SEOUL, District.SEOUL_GANGNAM, false);
+        given(passwordEncoder.matches(rawPassword, encodedPassword)).willReturn(true);
 
         // when
-        boolean matches = user.matchesPassword(rawPassword, passwordEncoder);
+        boolean matches = authService.matchesPassword(user, rawPassword);
 
         // then
         assertThat(matches).isTrue();
@@ -81,10 +98,10 @@ class UserPasswordTest {
         User user = User.createUser("test@example.com", rawPassword, "홍길동", 
                                   LocalDate.of(1990, 1, 1), 180, Gender.MALE,
                                   Position.FW, UserRole.ROLE_MEMBER, "010-1234-5678",
-                                  City.SEOUL, District.SEOUL_GANGNAM, false, passwordEncoder);
+                                  City.SEOUL, District.SEOUL_GANGNAM, false);
 
         // when
-        boolean matches = user.matchesPassword(wrongPassword, passwordEncoder);
+        boolean matches = authService.matchesPassword(user, wrongPassword);
 
         // then
         assertThat(matches).isFalse();
@@ -96,19 +113,25 @@ class UserPasswordTest {
         // given
         String oldPassword = "oldpassword";
         String newPassword = "newpassword";
+
         User user = User.createUser("test@example.com", oldPassword, "홍길동", 
                                   LocalDate.of(1990, 1, 1), 180, Gender.MALE,
                                   Position.FW, UserRole.ROLE_MEMBER, "010-1234-5678",
-                                  City.SEOUL, District.SEOUL_GANGNAM, false, passwordEncoder);
+                                  City.SEOUL, District.SEOUL_GANGNAM, false);
         String oldPasswordHash = user.getPassword();
+        String encodedNew = passwordEncoder.encode(newPassword);
+        String encodedOld = passwordEncoder.encode(oldPassword);
+
+        given(passwordEncoder.matches("newpassword", encodedNew)).willReturn(true);
+        given(passwordEncoder.matches("oldpassword", encodedOld)).willReturn(false);
 
         // when
-        user.changePassword(newPassword, passwordEncoder);
+        user.changePassword(encodedNew);
 
         // then
         assertThat(user.getPassword()).isNotEqualTo(oldPasswordHash); // 기존 해시와 다름
         assertThat(user.getPassword()).isNotEqualTo(newPassword); // 평문과 다름
-        assertThat(user.matchesPassword(newPassword, passwordEncoder)).isTrue(); // 새 비밀번호로 인증 가능
-        assertThat(user.matchesPassword(oldPassword, passwordEncoder)).isFalse(); // 기존 비밀번호로 인증 불가
+        assertThat(authService.matchesPassword(user, newPassword)).isTrue(); // 새 비밀번호로 인증 가능
+        assertThat(authService.matchesPassword(user, oldPasswordHash)).isFalse(); // 기존 비밀번호로 인증 불가
     }
 }

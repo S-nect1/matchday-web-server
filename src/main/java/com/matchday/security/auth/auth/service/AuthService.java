@@ -27,13 +27,17 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
 
+    public boolean matchesPassword(User user, String rawPassword) {
+        return passwordEncoder.matches(rawPassword, user.getPassword());
+    }
+
     // 로그인
     public LoginResponse login(LoginRequest request) {
         // 이메일로 유저 조회
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new GeneralException(ResponseCode.EMAIL_NOT_FOUND));
         // 비밀번호 확인
-        if (!user.matchesPassword(request.getPassword(), passwordEncoder)) {
+        if (!matchesPassword(user, request.getPassword())) {
             throw new GeneralException(ResponseCode.INVALID_PASSWORD);
         }
 
@@ -79,10 +83,11 @@ public class AuthService {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new GeneralException(ResponseCode.EMAIL_ALREADY_EXISTS);
         }
-        
+
+        String encoded = passwordEncoder.encode(request.getPassword());
         User user = User.createUser(
             request.getEmail(),
-            request.getPassword(),
+            encoded,
             request.getName(),
             request.getBirth(),
             request.getHeight(),
@@ -92,8 +97,7 @@ public class AuthService {
             request.getPhoneNumber(),
             request.getCity(),
             request.getDistrict(),
-            request.getIsProfessional(),
-            passwordEncoder
+            request.getIsProfessional()
         );
         
         // 선택필드

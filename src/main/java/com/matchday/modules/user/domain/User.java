@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 
-
 @Getter
 @Entity
 @Table(name = "users")
@@ -65,14 +64,13 @@ public class User extends BaseEntity {
 
     private Integer backNumber;
 
-    public static User createUser(String email, String rawPassword, String name,
+    public static User createUser(String email, String encodedPassword, String name,
                                   LocalDate birth, Integer height, Gender gender,
                                   Position mainPosition, UserRole role, String phoneNumber,
-                                  City city, District district, Boolean isProfessional,
-                                  PasswordEncoder passwordEncoder) {
+                                  City city, District district, Boolean isProfessional) {
         User user = new User();
         user.email = email;
-        user.password = passwordEncoder.encode(rawPassword);
+        user.password = encodedPassword;
         user.name = name;
         user.birth = birth;
         user.height = height;
@@ -86,12 +84,8 @@ public class User extends BaseEntity {
         return user;
     }
 
-    public void changePassword(String rawPassword, PasswordEncoder passwordEncoder) {
-        this.password = passwordEncoder.encode(rawPassword);
-    }
-
-    public boolean matchesPassword(String rawPassword, PasswordEncoder passwordEncoder) {
-        return passwordEncoder.matches(rawPassword, this.password);
+    public void changePassword(String encodedPassword) {
+        this.password = encodedPassword;
     }
     
     public void updateWeight(Integer weight) {
