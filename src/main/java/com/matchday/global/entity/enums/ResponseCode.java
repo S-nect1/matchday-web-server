@@ -20,14 +20,14 @@ public enum ResponseCode {
     // Common Error
     _INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON000", "서버 에러, 관리자에게 문의 바랍니다."),
     _BAD_REQUEST(HttpStatus.BAD_REQUEST,"COMMON001","잘못된 요청입니다."),
-    _UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"COMMON002","권한이 잘못되었습니다"),
+    _UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"COMMON002","권한이 잘못되었습니다."),
     _METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "COMMON003", "지원하지 않는 Http Method 입니다."),
     _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON004", "금지된 요청입니다."),
     _INVALID_FORMAT(HttpStatus.BAD_REQUEST, "COMMON005", "날짜 형식이 잘못되었습니다."),
     _MISMATCHED_INPUT(HttpStatus.BAD_REQUEST, "COMMON006", "필드 타입이 일치하지 않습니다."),
 
     // Member Error
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER001", "사용자가 없습니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER001", "올바르지 않은 사용자입니다."),
     NICKNAME_NOT_EXIST(HttpStatus.BAD_REQUEST, "USER002", "닉네임은 필수 입니다."),
 
     // Review Error
