@@ -1,7 +1,7 @@
 package com.matchday.external.controller;
 
-import com.matchday.global.dto.response.FileUploadResponse;
-import com.matchday.global.entity.BaseResponse;
+import com.matchday.common.dto.response.FileUploadResponse;
+import com.matchday.common.entity.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

@@ -1,10 +1,11 @@
 package com.matchday.user.domain;
 
-import com.matchday.global.entity.enums.City;
-import com.matchday.global.entity.enums.District;
-import com.matchday.team.domain.enums.Position;
-import com.matchday.user.domain.enums.Gender;
-import com.matchday.user.domain.enums.UserRole;
+import com.matchday.common.entity.enums.City;
+import com.matchday.common.entity.enums.District;
+import com.matchday.modules.team.domain.enums.Position;
+import com.matchday.modules.user.domain.User;
+import com.matchday.modules.user.domain.enums.Gender;
+import com.matchday.modules.user.domain.enums.UserRole;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

@@ -1,12 +1,14 @@
 package com.matchday.auth.service;
 
-import com.matchday.auth.dto.LoginRequest;
-import com.matchday.auth.dto.LoginResponse;
-import com.matchday.global.entity.enums.ResponseCode;
-import com.matchday.global.exception.GeneralException;
-import com.matchday.user.domain.User;
-import com.matchday.user.domain.enums.UserRole;
-import com.matchday.user.repository.UserRepository;
+import com.matchday.security.auth.auth.dto.request.LoginRequest;
+import com.matchday.security.auth.auth.dto.response.LoginResponse;
+import com.matchday.common.entity.enums.ResponseCode;
+import com.matchday.common.exception.GeneralException;
+import com.matchday.modules.user.domain.User;
+import com.matchday.modules.user.domain.enums.UserRole;
+import com.matchday.modules.user.repository.UserRepository;
+import com.matchday.security.auth.auth.service.AuthService;
+import com.matchday.security.utils.TokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

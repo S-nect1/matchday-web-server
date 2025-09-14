@@ -1,10 +1,11 @@
 package com.matchday.user.domain;
 
-import com.matchday.global.entity.enums.City;
-import com.matchday.global.entity.enums.District;
-import com.matchday.team.domain.enums.Position;
-import com.matchday.user.domain.enums.Gender;
-import com.matchday.user.domain.enums.UserRole;
+import com.matchday.common.entity.enums.City;
+import com.matchday.common.entity.enums.District;
+import com.matchday.modules.team.domain.enums.Position;
+import com.matchday.modules.user.domain.User;
+import com.matchday.modules.user.domain.enums.Gender;
+import com.matchday.modules.user.domain.enums.UserRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,7 @@ class UserPasswordTest {
         Boolean isProfessional = false;
 
         // when
-        User user = User.createUser(email, rawPassword, name, birth, height, gender, 
+        User user = User.createUser(email, rawPassword, name, birth, height, gender,
                                   mainPosition, role, phoneNumber, city, district, 
                                   isProfessional, passwordEncoder);
 

@@ -1,9 +1,10 @@
 package com.matchday.team.domain;
 
-import com.matchday.global.entity.enums.City;
-import com.matchday.global.entity.enums.District;
-import com.matchday.team.domain.enums.GroupGender;
-import com.matchday.team.domain.enums.TeamType;
+import com.matchday.common.entity.enums.City;
+import com.matchday.common.entity.enums.District;
+import com.matchday.modules.team.domain.Team;
+import com.matchday.modules.team.domain.enums.GroupGender;
+import com.matchday.modules.team.domain.enums.TeamType;
 
 public class TeamFixture {
     

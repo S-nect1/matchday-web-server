@@ -1,9 +1,9 @@
 package com.matchday.external.controller;
 
 import com.matchday.external.exception.ExternalControllerAdvice;
-import com.matchday.global.dto.response.FileUploadResponse;
-import com.matchday.global.entity.BaseResponse;
-import com.matchday.global.entity.enums.ResponseCode;
+import com.matchday.common.dto.response.FileUploadResponse;
+import com.matchday.common.entity.BaseResponse;
+import com.matchday.common.entity.enums.ResponseCode;
 import com.matchday.external.fileService.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

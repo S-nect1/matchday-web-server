@@ -1,9 +1,9 @@
 package com.matchday.auth.service;
 
-import com.matchday.auth.domain.RefreshToken;
-import com.matchday.auth.exception.advice.AuthControllerAdvice;
-import com.matchday.auth.repository.RefreshTokenRepository;
-import com.matchday.global.entity.enums.ResponseCode;
+import com.matchday.security.auth.auth.domain.RefreshToken;
+import com.matchday.security.auth.auth.exception.AuthControllerAdvice;
+import com.matchday.security.auth.auth.repository.RefreshTokenRepository;
+import com.matchday.security.auth.auth.service.RefreshTokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)

@@ -1,10 +1,11 @@
 package com.matchday.team.domain;
 
-import com.matchday.global.entity.enums.City;
-import com.matchday.global.entity.enums.District;
-import com.matchday.team.domain.enums.GroupGender;
-import com.matchday.team.domain.enums.TeamType;
-import com.matchday.team.exception.advice.TeamControllerAdvice;
+import com.matchday.common.entity.enums.City;
+import com.matchday.common.entity.enums.District;
+import com.matchday.modules.team.domain.Team;
+import com.matchday.modules.team.domain.enums.GroupGender;
+import com.matchday.modules.team.domain.enums.TeamType;
+import com.matchday.modules.team.exception.TeamControllerAdvice;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +31,7 @@ class TeamTest {
         String profileImageUrl = "https://example.com/image.jpg";
 
         // when
-        Team team = Team.createTeam(name, description, type, city, district, 
+        Team team = Team.createTeam(name, description, type, city, district,
                                    uniformColorHex, hasBall, gender, memberLimit,
                                    bankName, bankAccount, profileImageUrl);
 

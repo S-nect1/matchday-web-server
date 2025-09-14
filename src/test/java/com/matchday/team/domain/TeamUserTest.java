@@ -1,15 +1,17 @@
 package com.matchday.team.domain;
 
-import com.matchday.global.entity.enums.City;
-import com.matchday.global.entity.enums.District;
-import com.matchday.team.domain.enums.GroupGender;
-import com.matchday.team.domain.enums.TeamRole;
-import com.matchday.team.domain.enums.TeamType;
-import com.matchday.team.domain.enums.Position;
-import com.matchday.team.exception.advice.TeamControllerAdvice;
-import com.matchday.user.domain.User;
-import com.matchday.user.domain.enums.Gender;
-import com.matchday.user.domain.enums.UserRole;
+import com.matchday.common.entity.enums.City;
+import com.matchday.common.entity.enums.District;
+import com.matchday.modules.team.domain.Team;
+import com.matchday.modules.team.domain.TeamUser;
+import com.matchday.modules.team.domain.enums.GroupGender;
+import com.matchday.modules.team.domain.enums.TeamRole;
+import com.matchday.modules.team.domain.enums.TeamType;
+import com.matchday.modules.team.domain.enums.Position;
+import com.matchday.modules.team.exception.TeamControllerAdvice;
+import com.matchday.modules.user.domain.User;
+import com.matchday.modules.user.domain.enums.Gender;
+import com.matchday.modules.user.domain.enums.UserRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
