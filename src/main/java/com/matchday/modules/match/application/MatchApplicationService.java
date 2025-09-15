@@ -3,6 +3,7 @@ package com.matchday.modules.match.application;
 import com.matchday.common.entity.enums.ResponseCode;
 import com.matchday.modules.match.domain.Match;
 import com.matchday.modules.match.domain.MatchApplication;
+import com.matchday.modules.match.domain.enums.MatchApplicationStatus;
 import com.matchday.modules.match.domain.enums.MatchStatus;
 import com.matchday.modules.match.api.dto.dto.request.MatchApplicationRequest;
 import com.matchday.modules.match.api.dto.dto.response.MatchApplicationResponse;
@@ -81,7 +82,7 @@ public class MatchApplicationService {
         }
     }
 
-    // 해당 매치의 신청 목록 조회
+    // 해당 매치의 신청 목록 조회 TODO: projection
     public List<MatchApplicationResponse> getMatchApplications(Long userId, Long matchId) {
         Match match = matchRepository.findById(matchId)
                 .orElseThrow(() -> new MatchControllerAdvice(ResponseCode.MATCH_NOT_FOUND));
@@ -95,7 +96,7 @@ public class MatchApplicationService {
                 .collect(Collectors.toList());
     }
 
-    // 팀이 신청한 목록 조회
+    // 팀이 신청한 목록 조회 TODO: pagination, projection
     public List<MatchApplicationResponse> getTeamApplications(Long userId, Long teamId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamControllerAdvice(ResponseCode.TEAM_NOT_FOUND));
@@ -109,7 +110,7 @@ public class MatchApplicationService {
                 .collect(Collectors.toList());
     }
 
-    // 팀이 받은 신청 목록 조회
+    // 팀이 받은 전체 신청 목록 조회 TODO: pagination, projection
     public List<MatchApplicationResponse> getReceivedApplications(Long userId, Long teamId) {
         // 팀 조회 및 권한 확인
         Team team = teamRepository.findById(teamId)
@@ -143,7 +144,7 @@ public class MatchApplicationService {
         match.acceptMatch();
 
         // 다른 모든 신청들 거절
-
+        rejectOtherApplications(match, application);
 
         log.info("매치 신청이 수락되었습니다. 신청 ID: {}, 매치 ID: {}", applicationId, match.getId());
     }
@@ -175,5 +176,18 @@ public class MatchApplicationService {
         application.cancel();
         
         log.info("매치 신청이 취소되었습니다. 신청 ID: {}", applicationId);
+    }
+
+    // 선택된 신청을 제외한 다른 모든 신청들을 거절 처리 TODO: 쿼리 줄일 수 있을 듯 (벌크 업뎃)
+    private void rejectOtherApplications(Match match, MatchApplication acceptedApplication) {
+        List<MatchApplication> otherApplications = matchApplicationRepository
+                .findByMatchAndStatus(match, MatchApplicationStatus.APPLIED);
+        
+        otherApplications.stream()
+                .filter(application -> !application.getId().equals(acceptedApplication.getId()))
+                .forEach(MatchApplication::reject);
+        
+        log.info("매치 ID: {}의 다른 신청 {}건이 자동으로 거절되었습니다.", 
+                match.getId(), otherApplications.size() - 1);
     }
 }

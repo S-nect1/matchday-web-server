@@ -253,8 +253,11 @@ class MatchApplicationServiceTest {
         MatchApplication application = createMatchApplication(match, applicantTeam, "신청 메시지");
         
         ReflectionTestUtils.setField(homeTeam, "id", 1L);
+        ReflectionTestUtils.setField(application, "id", applicationId);
         
         given(matchApplicationRepository.findById(applicationId)).willReturn(Optional.of(application));
+        given(matchApplicationRepository.findByMatchAndStatus(match, MatchApplicationStatus.APPLIED))
+            .willReturn(List.of(application));
         
         // when
         matchApplicationService.acceptApplication(userId, applicationId);
@@ -263,6 +266,56 @@ class MatchApplicationServiceTest {
         verify(teamUserService).validatePermission(homeTeam.getId(), userId);
         assertThat(application.getStatus()).isEqualTo(MatchApplicationStatus.ACCEPTED);
         assertThat(match.getStatus()).isEqualTo(MatchStatus.CONFIRMED);
+        verify(matchApplicationRepository).findByMatchAndStatus(match, MatchApplicationStatus.APPLIED);
+    }
+
+    @Test
+    @DisplayName("매치 신청 수락 성공 - 다른 신청들 자동 거절")
+    void acceptApplication_성공_다른신청들자동거절() {
+        // given
+        Long userId = 1L;
+        Long acceptedApplicationId = 1L;
+        
+        Team homeTeam = TeamFixture.defaultTeam();
+        Team applicantTeam1 = TeamFixture.teamWithName("신청팀1");
+        Team applicantTeam2 = TeamFixture.teamWithName("신청팀2");
+        Team applicantTeam3 = TeamFixture.teamWithName("신청팀3");
+        
+        Match match = createPendingMatch(homeTeam);
+        MatchApplication acceptedApplication = createMatchApplication(match, applicantTeam1, "수락될 신청");
+        MatchApplication rejectedApplication1 = createMatchApplication(match, applicantTeam2, "거절될 신청1");
+        MatchApplication rejectedApplication2 = createMatchApplication(match, applicantTeam3, "거절될 신청2");
+        
+        ReflectionTestUtils.setField(homeTeam, "id", 1L);
+        ReflectionTestUtils.setField(acceptedApplication, "id", acceptedApplicationId);
+        ReflectionTestUtils.setField(rejectedApplication1, "id", 2L);
+        ReflectionTestUtils.setField(rejectedApplication2, "id", 3L);
+        
+        List<MatchApplication> allApplications = List.of(
+            acceptedApplication, rejectedApplication1, rejectedApplication2
+        );
+        
+        given(matchApplicationRepository.findById(acceptedApplicationId))
+            .willReturn(Optional.of(acceptedApplication));
+        given(matchApplicationRepository.findByMatchAndStatus(match, MatchApplicationStatus.APPLIED))
+            .willReturn(allApplications);
+        
+        // when
+        matchApplicationService.acceptApplication(userId, acceptedApplicationId);
+        
+        // then
+        verify(teamUserService).validatePermission(homeTeam.getId(), userId);
+        
+        // 수락된 신청 확인
+        assertThat(acceptedApplication.getStatus()).isEqualTo(MatchApplicationStatus.ACCEPTED);
+        assertThat(match.getStatus()).isEqualTo(MatchStatus.CONFIRMED);
+        
+        // 다른 신청들이 거절되었는지 확인
+        assertThat(rejectedApplication1.getStatus()).isEqualTo(MatchApplicationStatus.REJECTED);
+        assertThat(rejectedApplication2.getStatus()).isEqualTo(MatchApplicationStatus.REJECTED);
+        
+        // rejectOtherApplications 메서드가 호출되었는지 확인
+        verify(matchApplicationRepository).findByMatchAndStatus(match, MatchApplicationStatus.APPLIED);
     }
     
     @Test

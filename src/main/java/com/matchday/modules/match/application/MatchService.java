@@ -100,7 +100,7 @@ public class MatchService {
                 .collect(Collectors.toList());
     }
 
-    // 해당 팀의 모든 등록한 매치 조회
+    // 해당 팀의 모든 등록한 매치 조회 TODO: pagination
     public List<MatchListResponse> getTeamMatches(Long userId, Long teamId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamControllerAdvice(ResponseCode.TEAM_NOT_FOUND));
