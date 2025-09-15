@@ -5,11 +5,13 @@ import com.matchday.modules.team.domain.enums.TeamRole;
 import com.matchday.modules.team.dto.request.TeamJoinRequest;
 import com.matchday.modules.team.dto.response.TeamResponse;
 import com.matchday.modules.team.dto.response.TeamUserResponse;
+import com.matchday.security.filter.JwtUserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,7 +30,7 @@ public interface TeamUserControllerDocs {
     )
     @PostMapping("/join")
     BaseResponse<TeamUserResponse> joinTeam(
-        @RequestHeader("User-Id") Long userId,
+        @AuthenticationPrincipal JwtUserPrincipal userPrincipal,
         @Valid @RequestBody TeamJoinRequest request
     );
 
@@ -45,7 +47,7 @@ public interface TeamUserControllerDocs {
     BaseResponse<String> leaveTeam(
         @Parameter(description = "팀 ID", example = "1")
         @PathVariable Long teamId,
-        @RequestHeader("User-Id") Long userId
+        @AuthenticationPrincipal JwtUserPrincipal userPrincipal
     );
 
     @Operation(
@@ -71,7 +73,7 @@ public interface TeamUserControllerDocs {
     )
     @GetMapping("/my-teams")
     BaseResponse<List<TeamResponse>> getMyTeams(
-        @RequestHeader("User-Id") Long userId
+        @AuthenticationPrincipal JwtUserPrincipal userPrincipal
     );
 
     @Operation(
@@ -91,6 +93,6 @@ public interface TeamUserControllerDocs {
         @PathVariable Long targetUserId,
         @Parameter(description = "변경할 역할", example = "MANAGER")
         @RequestParam TeamRole role,
-        @RequestHeader("User-Id") Long requestUserId
+        @AuthenticationPrincipal JwtUserPrincipal userPrincipal
     );
 }

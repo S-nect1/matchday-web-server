@@ -10,11 +10,13 @@ import com.matchday.modules.team.dto.request.TeamCreateRequest;
 import com.matchday.modules.team.dto.request.TeamUpdateRequest;
 import com.matchday.modules.team.dto.response.TeamListResponse;
 import com.matchday.modules.team.dto.response.TeamResponse;
+import com.matchday.security.filter.JwtUserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "팀 관리", description = "팀 생성, 조회, 수정, 삭제 API")
@@ -28,8 +30,8 @@ public interface TeamControllerDocs {
         }
     )
     BaseResponse<Long> createTeam(
-        @Valid @RequestBody TeamCreateRequest request, 
-        @RequestHeader("User-Id") Long userId
+        @Valid @RequestBody TeamCreateRequest request,
+        @AuthenticationPrincipal JwtUserPrincipal userPrincipal
     );
 
     @Operation(
@@ -58,7 +60,7 @@ public interface TeamControllerDocs {
     BaseResponse<TeamResponse> updateTeam(
         @Parameter(description = "팀 ID", example = "1")
         @PathVariable Long teamId,
-        @RequestHeader("User-Id") Long userId,
+        @AuthenticationPrincipal JwtUserPrincipal userPrincipal,
         @Valid @RequestBody TeamUpdateRequest request
     );
 
@@ -74,7 +76,7 @@ public interface TeamControllerDocs {
     BaseResponse<String> deleteTeam(
         @Parameter(description = "팀 ID", example = "1")
         @PathVariable Long teamId,
-        @RequestHeader("User-Id") Long userId
+        @AuthenticationPrincipal JwtUserPrincipal userPrincipal
     );
 
     @Operation(
