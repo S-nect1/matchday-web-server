@@ -7,17 +7,14 @@ import com.matchday.modules.user.domain.User;
 import com.matchday.modules.user.domain.enums.Gender;
 import com.matchday.modules.user.domain.enums.UserRole;
 import com.matchday.modules.user.repository.UserRepository;
-import com.matchday.security.auth.auth.service.AuthService;
+import com.matchday.security.auth.auth.application.AuthService;
 import com.matchday.security.utils.TokenProvider;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;

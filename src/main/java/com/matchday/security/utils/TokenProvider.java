@@ -1,7 +1,7 @@
 package com.matchday.security.utils;
 
 import com.matchday.security.auth.auth.domain.RefreshToken;
-import com.matchday.security.auth.auth.service.RefreshTokenService;
+import com.matchday.security.auth.auth.application.RefreshTokenService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
