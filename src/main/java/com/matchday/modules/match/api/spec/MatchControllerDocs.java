@@ -1,9 +1,13 @@
 package com.matchday.modules.match.api.spec;
 
+import com.matchday.common.dto.response.PagedResponse;
 import com.matchday.common.entity.BaseResponse;
 import com.matchday.modules.match.api.dto.dto.request.MatchCreateRequest;
+import com.matchday.modules.match.api.dto.dto.request.MatchUpdateRequest;
 import com.matchday.modules.match.api.dto.dto.response.MatchListResponse;
 import com.matchday.modules.match.api.dto.dto.response.MatchResponse;
+import com.matchday.modules.match.domain.enums.MatchSize;
+import com.matchday.modules.match.domain.enums.SportsType;
 import com.matchday.security.filter.JwtUserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,6 +20,7 @@ import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Tag(name = "Match", description = "매치 관리 API")
@@ -61,15 +66,52 @@ public interface MatchControllerDocs {
 
     @Operation(
         summary = "매칭 가능한 매치 목록 조회", 
-        description = "현재 신청 가능한 매치 목록을 조회합니다. (상대팀이 없고, 미래 일정인 매치)"
+        description = "현재 신청 가능한 매치 목록을 조회합니다. 필터링 및 페이지네이션을 지원합니다."
     )
     @ApiResponse(
         responseCode = "200", 
         description = "매치 목록 조회 성공",
-        content = @Content(schema = @Schema(implementation = MatchListResponse.class))
+        content = @Content(schema = @Schema(implementation = PagedResponse.class))
     )
-    BaseResponse<List<MatchListResponse>> getAvailableMatches();
+    BaseResponse<PagedResponse<MatchListResponse>> getAvailableMatches(
+        @Parameter(description = "스포츠 종목")
+        @RequestParam(required = false) SportsType sportsType,
+        @Parameter(description = "매치 규모")
+        @RequestParam(required = false) MatchSize matchSize,
+        @Parameter(description = "검색 시작 날짜")
+        @RequestParam(required = false) LocalDate startDate,
+        @Parameter(description = "검색 종료 날짜")
+        @RequestParam(required = false) LocalDate endDate,
+        @Parameter(description = "검색 키워드 (팀명, 장소명)")
+        @RequestParam(required = false) String keyword,
+        @Parameter(description = "페이지 번호 (0부터 시작)")
+        @RequestParam(defaultValue = "0") int page,
+        @Parameter(description = "페이지 크기")
+        @RequestParam(defaultValue = "20") int size,
+        @Parameter(description = "정렬 기준")
+        @RequestParam(defaultValue = "createdAt") String sort,
+        @Parameter(description = "정렬 방향")
+        @RequestParam(defaultValue = "desc") String direction
+    );
 
+    @Operation(
+        summary = "매치 수정", 
+        description = "매치 정보를 수정합니다. 홈팀의 팀장 또는 부팀장만 수정할 수 있으며, PENDING 상태의 매치만 수정 가능합니다."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "매치 수정 성공"),
+        @ApiResponse(responseCode = "400", description = "잘못된 요청 또는 이미 확정된 매치"),
+        @ApiResponse(responseCode = "403", description = "권한 없음"),
+        @ApiResponse(responseCode = "404", description = "매치를 찾을 수 없음")
+    })
+    BaseResponse<String> updateMatch(
+        @Parameter(description = "매치 ID", required = true)
+        @PathVariable Long matchId,
+        @Parameter(description = "인증된 사용자 정보", hidden = true)
+        @AuthenticationPrincipal JwtUserPrincipal userPrincipal,
+        @Parameter(description = "매치 수정 요청", required = true)
+        @Valid @RequestBody MatchUpdateRequest request
+    );
 
     @Operation(
         summary = "매치 삭제", 

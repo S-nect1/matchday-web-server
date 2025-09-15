@@ -1,4 +1,4 @@
-package com.matchday.config.config;
+package com.matchday.config;
 
 import com.matchday.security.filter.JwtAuthenticationFilter;
 

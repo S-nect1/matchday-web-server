@@ -149,24 +149,81 @@ public class Match extends BaseEntity {
     }
 
     // 대기 중에만 수정 가능
-    public void updateMatchInfo(City city, District district, String placeName, LocalDate date,
-                               LocalTime startTime, LocalTime endTime, Integer fee,
-                               String homeColor, String awayColor, Boolean hasBall) {
+    public void updateMatchInfo(SportsType sportsType, MatchSize matchSize, City city, District district, 
+                               String placeName, String zipCode, LocalDate date, LocalTime startTime, 
+                               LocalTime endTime, Integer fee, String homeColor, Boolean hasBall) {
         if (!this.status.equals(MatchStatus.PENDING)) {
             throw new MatchControllerAdvice(ResponseCode.MATCH_ALREADY_COMPLETED);
         }
         
+        this.sportsType = sportsType;
+        this.matchSize = matchSize;
         this.city = city;
         this.district = district;
         this.placeName = placeName;
+        this.zipCode = zipCode;
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
         this.fee = fee;
         this.homeColor = homeColor;
-        this.awayColor = awayColor;
         this.hasBall = hasBall;
         
         validateMatchDateTime();
+    }
+
+    // 스포츠 종목 업데이트
+    public void updateSportsType(SportsType sportsType) {
+        validateStatus();
+        this.sportsType = sportsType;
+    }
+
+    // 매치 사이즈 업데이트
+    public void updateMatchSize(MatchSize matchSize) {
+        validateStatus();
+        this.matchSize = matchSize;
+    }
+
+    // 장소 정보 업데이트
+    public void updateLocation(City city, District district, String placeName, String zipCode) {
+        validateStatus();
+        this.city = city;
+        this.district = district;
+        this.placeName = placeName;
+        this.zipCode = zipCode;
+    }
+
+    // 매치 시간 업데이트
+    public void updateMatchTime(LocalDate date, LocalTime startTime, LocalTime endTime) {
+        validateStatus();
+        this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        validateMatchDateTime();
+    }
+
+    // 대관료 업데이트
+    public void updateFee(Integer fee) {
+        validateStatus();
+        this.fee = fee;
+    }
+
+    // 홈 유니폼 색상 업데이트
+    public void updateHomeColor(String homeColor) {
+        validateStatus();
+        this.homeColor = homeColor;
+    }
+
+    // 공 보유 여부 업데이트
+    public void updateHasBall(Boolean hasBall) {
+        validateStatus();
+        this.hasBall = hasBall;
+    }
+
+    // 상태 검증 (PENDING 상태에서만 수정 가능)
+    private void validateStatus() {
+        if (!this.status.equals(MatchStatus.PENDING)) {
+            throw new MatchControllerAdvice(ResponseCode.MATCH_ALREADY_COMPLETED);
+        }
     }
 }

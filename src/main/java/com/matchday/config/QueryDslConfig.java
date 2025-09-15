@@ -1,4 +1,4 @@
-package com.matchday.config.config;
+package com.matchday.config;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;

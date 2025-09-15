@@ -22,7 +22,7 @@ public class TeamMatchController implements TeamMatchControllerDocs {
     private final MatchService matchService;
     private final MatchApplicationService matchApplicationService;
 
-    // 팀이 등록한 매치 목록 조회
+    // 팀이 등록한 매치 목록 조회 TODO: projection
     @GetMapping("/{teamId}/matches")
     public BaseResponse<List<MatchListResponse>> getTeamMatches(
             @PathVariable Long teamId,
@@ -32,7 +32,7 @@ public class TeamMatchController implements TeamMatchControllerDocs {
         return BaseResponse.onSuccess(response, ResponseCode.OK);
     }
 
-    // 팀이 신청한 매치 목록 조회
+    // 팀이 신청한 매치 목록 조회 TODO: projection
     @GetMapping("/{teamId}/applications")
     public BaseResponse<List<MatchApplicationResponse>> getTeamApplications(
             @PathVariable Long teamId,
@@ -42,7 +42,7 @@ public class TeamMatchController implements TeamMatchControllerDocs {
         return BaseResponse.onSuccess(response, ResponseCode.OK);
     }
 
-    // 팀이 받은 신청 목록 조회
+    // 팀이 받은 신청 목록 조회 TODO: projection
     @GetMapping("/{teamId}/received-applications")
     public BaseResponse<List<MatchApplicationResponse>> getReceivedApplications(
             @PathVariable Long teamId,
@@ -51,4 +51,11 @@ public class TeamMatchController implements TeamMatchControllerDocs {
         List<MatchApplicationResponse> response = matchApplicationService.getReceivedApplications(userPrincipal.getUserId(), teamId);
         return BaseResponse.onSuccess(response, ResponseCode.OK);
     }
+
+    // 팀의 확정된 매치 목록 TODO: pagination, projection
+
+
+    // 매치 결과 기록 (48시간 이내 가능)
+
+
 }

@@ -61,7 +61,7 @@ public class TeamService {
         }
         Team savedTeam = teamRepository.save(team);
         
-        // 팀장으로 팀에 가입 (TeamUserService 위임)
+        // 팀장 역할 부여
         teamUserService.addTeamLeader(savedTeam, user);
         
         log.info("팀 생성 완료 - 사용자: {}, 팀: {}", userId, savedTeam.getId());
@@ -153,7 +153,6 @@ public class TeamService {
      */
     @Transactional
     public void deleteTeam(Long teamId, Long requestUserId) {
-        // 팀 조회
         Team team = teamRepository.findById(teamId)
             .orElseThrow(() -> new TeamControllerAdvice(ResponseCode.TEAM_NOT_FOUND));
         

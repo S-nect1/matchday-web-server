@@ -1,6 +1,6 @@
 package com.matchday.modules.team.team.infrastructure;
 
-import com.matchday.config.config.QueryDslConfig;
+import com.matchday.config.QueryDslConfig;
 import com.matchday.common.entity.enums.City;
 import com.matchday.common.entity.enums.District;
 import com.matchday.modules.team.domain.Team;

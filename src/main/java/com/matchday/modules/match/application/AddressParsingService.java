@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// FIXME: 전체 주소를 받고 파싱하는거보다 그냥 받는거 자체를 enum으로 받는게 더 나을 듯 -> 기획 문의
 @Service
 public class AddressParsingService {
     
