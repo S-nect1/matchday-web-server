@@ -1,4 +1,4 @@
-package com.matchday.modules.team.controller;
+package com.matchday.modules.team.controller.spec;
 
 import com.matchday.common.entity.BaseResponse;
 import com.matchday.modules.team.domain.enums.TeamRole;

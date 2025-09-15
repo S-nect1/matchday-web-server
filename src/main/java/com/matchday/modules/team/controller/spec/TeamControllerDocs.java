@@ -1,4 +1,4 @@
-package com.matchday.modules.team.controller;
+package com.matchday.modules.team.controller.spec;
 
 import com.matchday.common.dto.response.PagedResponse;
 import com.matchday.common.entity.BaseResponse;

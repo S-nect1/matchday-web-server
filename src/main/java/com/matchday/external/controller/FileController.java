@@ -5,8 +5,10 @@ import com.matchday.common.dto.response.FileUploadResponse;
 import com.matchday.common.entity.BaseResponse;
 import com.matchday.common.entity.enums.ResponseCode;
 import com.matchday.external.fileService.StorageService;
+import com.matchday.security.filter.JwtUserPrincipal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,13 +35,13 @@ public class FileController implements FileControllerDocs {
     public BaseResponse<FileUploadResponse> uploadFile(
             @RequestParam("file") MultipartFile file,
             @RequestParam("category") String category,
-            @RequestHeader("User-Id") Long userId) throws IOException {
+            @AuthenticationPrincipal JwtUserPrincipal userPrincipal) throws IOException {
         
         // 파일 유효성 검사
         validateFile(file);
 
         // 카테고리별 경로 생성
-        String basePath = generateFilePath(category, userId);
+        String basePath = generateFilePath(category, userPrincipal.getUserId());
 
         // 파일 업로드
         String fileUrl = storageService.uploadFile(file, basePath);
@@ -54,7 +56,7 @@ public class FileController implements FileControllerDocs {
         );
 
         log.info("파일 업로드 성공 - 사용자: {}, 카테고리: {}, 파일명: {}",
-                userId, category, file.getOriginalFilename());
+                userPrincipal.getUserId(), category, file.getOriginalFilename());
 
         return BaseResponse.onSuccess(response, ResponseCode.OK);
     }

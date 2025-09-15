@@ -5,6 +5,7 @@ import com.matchday.common.entity.BaseResponse;
 import com.matchday.common.entity.enums.City;
 import com.matchday.common.entity.enums.District;
 import com.matchday.common.entity.enums.ResponseCode;
+import com.matchday.modules.team.controller.spec.TeamControllerDocs;
 import com.matchday.modules.team.domain.enums.GroupGender;
 import com.matchday.modules.team.domain.enums.TeamType;
 import com.matchday.modules.team.dto.request.TeamCreateRequest;
@@ -13,8 +14,10 @@ import com.matchday.modules.team.dto.request.TeamUpdateRequest;
 import com.matchday.modules.team.dto.response.TeamListResponse;
 import com.matchday.modules.team.dto.response.TeamResponse;
 import com.matchday.modules.team.service.TeamService;
+import com.matchday.security.filter.JwtUserPrincipal;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,8 +29,10 @@ public class TeamController implements TeamControllerDocs {
     private final TeamService teamService;
 
     @PostMapping
-    public BaseResponse<Long> createTeam(@Valid @RequestBody TeamCreateRequest request, @RequestHeader("User-Id") Long userId) {
-        return BaseResponse.onSuccess(teamService.createTeam(userId, request), ResponseCode.OK);
+    public BaseResponse<Long> createTeam(
+            @Valid @RequestBody TeamCreateRequest request, 
+            @AuthenticationPrincipal JwtUserPrincipal userPrincipal) {
+        return BaseResponse.onSuccess(teamService.createTeam(userPrincipal.getUserId(), request), ResponseCode.OK);
     }
 
     @GetMapping("/{teamId}")
@@ -39,19 +44,19 @@ public class TeamController implements TeamControllerDocs {
     @PatchMapping("/{teamId}")
     public BaseResponse<TeamResponse> updateTeam(
             @PathVariable Long teamId,
-            @RequestHeader("User-Id") Long userId,
+            @AuthenticationPrincipal JwtUserPrincipal userPrincipal,
             @Valid @RequestBody TeamUpdateRequest request) {
         
-        TeamResponse response = teamService.updateTeam(teamId, request, userId);
+        TeamResponse response = teamService.updateTeam(teamId, request, userPrincipal.getUserId());
         return BaseResponse.onSuccess(response, ResponseCode.OK);
     }
 
     @DeleteMapping("/{teamId}")
     public BaseResponse<String> deleteTeam(
             @PathVariable Long teamId,
-            @RequestHeader("User-Id") Long userId) {
+            @AuthenticationPrincipal JwtUserPrincipal userPrincipal) {
         
-        teamService.deleteTeam(teamId, userId);
+        teamService.deleteTeam(teamId, userPrincipal.getUserId());
         return BaseResponse.onSuccess("팀이 삭제되었습니다.", ResponseCode.OK);
     }
 

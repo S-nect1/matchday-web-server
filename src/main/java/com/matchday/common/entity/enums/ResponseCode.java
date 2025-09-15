@@ -44,6 +44,14 @@ public enum ResponseCode {
     MATCH_SCHEDULE_NOT_FOUND(HttpStatus.BAD_REQUEST, "MATCH009", "매치 일정이 확정되지 않았거나, 존재하지 않습니다."),
     MATCH_DUPLICATED(HttpStatus.BAD_REQUEST, "MATCH010", "해당 시간에 다른 매치가 존재합니다."),
     MATCH_APPLICATION_INVALID_STATUS(HttpStatus.BAD_REQUEST, "MATCH011", "신청 상태에서만 처리할 수 있습니다."),
+    MATCH_ALREADY_ASSIGNED(HttpStatus.BAD_REQUEST, "MATCH012", "이미 상대 팀이 배정된 매치입니다."),
+    MATCH_SAME_TEAM(HttpStatus.BAD_REQUEST, "MATCH013", "같은 팀끼리는 매치할 수 없습니다."),
+    MATCH_NOT_ASSIGNED(HttpStatus.BAD_REQUEST, "MATCH014", "상대 팀이 배정되지 않은 매치입니다."),
+    MATCH_INVALID_SCORE(HttpStatus.BAD_REQUEST, "MATCH015", "점수는 0점 이상이어야 합니다."),
+    MATCH_SCORE_REQUIRED(HttpStatus.BAD_REQUEST, "MATCH016", "매치 완료를 위해 점수를 입력해주세요."),
+    MATCH_INVALID_DATE(HttpStatus.BAD_REQUEST, "MATCH017", "매치 날짜는 현재보다 미래여야 합니다."),
+    MATCH_INVALID_TIME(HttpStatus.BAD_REQUEST, "MATCH018", "시작 시간은 종료 시간보다 빨라야 합니다."),
+    MATCH_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST, "MATCH019", "이미 완료된 매치입니다."),
 
     // MatchUser Error
 

@@ -2,10 +2,12 @@ package com.matchday.external.controller;
 
 import com.matchday.common.dto.response.FileUploadResponse;
 import com.matchday.common.entity.BaseResponse;
+import com.matchday.security.filter.JwtUserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +31,7 @@ public interface FileControllerDocs {
         @RequestParam("file") MultipartFile file,
         @Parameter(description = "파일 카테고리", example = "team")
         @RequestParam("category") String category,
-        @RequestHeader("User-Id") Long userId
+        @Parameter(description = "인증된 사용자 정보", hidden = true)
+        @AuthenticationPrincipal JwtUserPrincipal userPrincipal
     ) throws IOException;
 }
