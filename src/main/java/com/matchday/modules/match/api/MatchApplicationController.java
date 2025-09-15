@@ -21,7 +21,7 @@ public class MatchApplicationController implements MatchApplicationControllerDoc
     
     private final MatchApplicationService matchApplicationService;
 
-    // 매치에 신청 (POST /matches/{matchId}/applications)
+    // 매치에 신청
     @PostMapping("/{matchId}/applications")
     public BaseResponse<Long> applyToMatch(
             @PathVariable Long matchId,
@@ -32,7 +32,7 @@ public class MatchApplicationController implements MatchApplicationControllerDoc
         return BaseResponse.onSuccess(applicationId, ResponseCode.OK);
     }
 
-    // 특정 매치에 받은 신청 목록 조회 (GET /matches/{matchId}/applications)
+    // 특정 매치에 받은 신청 목록 조회
     @GetMapping("/{matchId}/applications")
     public BaseResponse<List<MatchApplicationResponse>> getMatchApplications(
             @PathVariable Long matchId,

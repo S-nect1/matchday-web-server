@@ -22,7 +22,7 @@ public class MatchController implements MatchControllerDocs {
     
     private final MatchService matchService;
 
-    // 매치 생성 (POST /matches with teamId in request body)
+    // 매치 생성
     @PostMapping
     public BaseResponse<Long> createMatch(
             @AuthenticationPrincipal JwtUserPrincipal userPrincipal,
@@ -45,8 +45,6 @@ public class MatchController implements MatchControllerDocs {
         List<MatchListResponse> response = matchService.getAvailableMatches();
         return BaseResponse.onSuccess(response, ResponseCode.OK);
     }
-
-    // 해당 팀의 모든 매치 목록은 /teams/{teamId}/matches로 이동 예정
 
     // 내 모든 팀의 모든 매치 목록(response: 날짜, matchId, 페이지네이션: month)
 
