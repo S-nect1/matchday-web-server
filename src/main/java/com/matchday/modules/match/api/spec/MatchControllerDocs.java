@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
-@Tag(name = "Match", description = "매치 관리 API")
+@Tag(name = "매치 관리", description = "매치 등록, 삭제, 수정, 상세조회 API")
 public interface MatchControllerDocs {
 
     @Operation(
@@ -67,7 +67,7 @@ public interface MatchControllerDocs {
 
     @Operation(
         summary = "매칭 가능한 매치 목록 조회", 
-        description = "현재 신청 가능한 매치 목록을 조회합니다. 필터링 및 페이지네이션을 지원합니다."
+        description = "현재 신청 가능한 매치 목록을 필터 조건을 사용하여 조회합니다."
     )
     @ApiResponse(
         responseCode = "200", 

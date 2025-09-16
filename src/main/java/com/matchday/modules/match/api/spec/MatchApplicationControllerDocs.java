@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "MatchApplication", description = "매치 신청 관리 API")
+@Tag(name = "매치 신청 관리", description = "매치 신청, 거절, 취소, 받은 신청 조회 API")
 public interface MatchApplicationControllerDocs {
 
     @Operation(

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@Tag(name = "TeamMatch", description = "팀 매치 관리 API")
+@Tag(name = "팀 매치 관리", description = "팀이 받은/신청한 매치 관련 API")
 public interface TeamMatchControllerDocs {
 
     @Operation(
