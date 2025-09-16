@@ -68,7 +68,7 @@ public class MatchQueryRepositoryImpl implements MatchQueryRepository {
                         match.fee,
                         match.matchSize,
                         match.sportsType,
-                        match.createdDate
+                        match.createdAt
                 ))
                 .from(match)
                 .join(match.homeTeam, homeTeam)
@@ -401,7 +401,7 @@ public class MatchQueryRepositoryImpl implements MatchQueryRepository {
         boolean isAsc = "asc".equalsIgnoreCase(direction);
         
         return switch (sort) {
-            case "createdAt" -> isAsc ? match.createdDate.asc() : match.createdDate.desc();
+            case "createdAt" -> isAsc ? match.createdAt.asc() : match.createdAt.desc();
             case "date" -> isAsc ? match.date.asc() : match.date.desc();
             case "startTime" -> isAsc ? match.startTime.asc() : match.startTime.desc();
             case "fee" -> isAsc ? match.fee.asc() : match.fee.desc();

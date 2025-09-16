@@ -68,7 +68,7 @@ public class TeamQueryRepositoryImpl implements TeamQueryRepository {
                         team.memberLimit.as("memberLimit"),
                         team.hasBall.as("hasBall"),
                         team.profileImageUrl.as("profileImageUrl"),
-                        team.createdDate.as("createdAt"),
+                        team.createdAt.as("createdAt"),
                         teamUser.countDistinct().intValue().as("memberCount")
                 ))
                 .from(team)
@@ -76,7 +76,7 @@ public class TeamQueryRepositoryImpl implements TeamQueryRepository {
                 .where(city, district, type, gender, keyword)
                 .groupBy(team.id, team.name, team.description, team.type, team.city, 
                          team.district, team.gender, team.uniformColorHex, team.memberLimit, 
-                         team.hasBall, team.profileImageUrl, team.createdDate)
+                         team.hasBall, team.profileImageUrl, team.createdAt)
                 .orderBy(orderSpecifiers)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -132,7 +132,7 @@ public class TeamQueryRepositoryImpl implements TeamQueryRepository {
             if (spec != null) {
                 orders.add(spec);
             } else {
-                orders.add(team.createdDate.desc());
+                orders.add(team.createdAt.desc());
             }
         }
 
@@ -144,7 +144,7 @@ public class TeamQueryRepositoryImpl implements TeamQueryRepository {
 
         return switch (key) {
             case "name" -> asc ? team.name.asc() : team.name.desc();
-            case "createdAt" -> asc ? team.createdDate.asc() : team.createdDate.desc();
+            case "createdAt" -> asc ? team.createdAt.asc() : team.createdAt.desc();
             default -> null;
         };
     }
@@ -188,7 +188,7 @@ public class TeamQueryRepositoryImpl implements TeamQueryRepository {
                         team.memberLimit.as("memberLimit"),
                         team.hasBall.as("hasBall"),
                         team.profileImageUrl.as("profileImageUrl"),
-                        team.createdDate.as("createdAt"),
+                        team.createdAt.as("createdAt"),
                         teamUser.countDistinct().intValue().as("memberCount")
                 ))
                 .from(team)
@@ -196,7 +196,7 @@ public class TeamQueryRepositoryImpl implements TeamQueryRepository {
                 .where(team.id.in(teamIds))
                 .groupBy(team.id, team.name, team.description, team.type, team.city, 
                          team.district, team.gender, team.uniformColorHex, team.memberLimit, 
-                         team.hasBall, team.profileImageUrl, team.createdDate)
+                         team.hasBall, team.profileImageUrl, team.createdAt)
                 .orderBy(orderSpecifiers)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

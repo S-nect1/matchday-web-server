@@ -12,23 +12,23 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity {
     @CreatedDate
-    private LocalDateTime createdDate;
+    private LocalDateTime createdAt;
     @LastModifiedDate
-    private LocalDateTime updatedDate;
+    private LocalDateTime updatedAt;
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     public void setCreatedDate() {
-        this.createdDate = LocalDateTime.now().withNano(0);
+        this.createdAt = LocalDateTime.now().withNano(0);
     }
 
-    public LocalDateTime getUpdatedDate() {
-        return updatedDate;
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
     public void setUpdatedDate() {
-        this.updatedDate = LocalDateTime.now().withNano(0);
+        this.updatedAt = LocalDateTime.now().withNano(0);
     }
 }

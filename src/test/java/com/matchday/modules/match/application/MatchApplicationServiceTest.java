@@ -181,7 +181,7 @@ class MatchApplicationServiceTest {
         when(match.getHomeTeam()).thenReturn(homeTeam);
         
         given(matchRepository.findById(matchId)).willReturn(Optional.of(match));
-        given(matchApplicationRepository.findByMatchOrderByCreatedDateDesc(match))
+        given(matchApplicationRepository.findByMatchOrderByCreatedAtDesc(match))
             .willReturn(List.of(application));
         
         // when
@@ -205,7 +205,7 @@ class MatchApplicationServiceTest {
         MatchApplication application = createMatchApplication(match, applicantTeam, "신청 메시지");
         
         given(teamRepository.findById(teamId)).willReturn(Optional.of(applicantTeam));
-        given(matchApplicationRepository.findByApplicantTeamOrderByCreatedDateDesc(applicantTeam))
+        given(matchApplicationRepository.findByApplicantTeamOrderByCreatedAtDesc(applicantTeam))
             .willReturn(List.of(application));
         
         // when

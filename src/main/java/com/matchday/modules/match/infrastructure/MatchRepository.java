@@ -19,5 +19,5 @@ public interface MatchRepository extends JpaRepository<Match, Long>, MatchQueryR
                                      @Param("startTime") LocalTime startTime,
                                      @Param("endTime") LocalTime endTime);
     
-    List<Match> findByHomeTeamOrderByCreatedDateDesc(Team homeTeam);
+    List<Match> findByHomeTeamOrderByCreatedAtDesc(Team homeTeam);
 }

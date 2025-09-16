@@ -59,7 +59,7 @@ public class MatchResponse {
             match.getStatus().equals(MatchStatus.COMPLETED),
             match.getHomeScore(),
             match.getAwayScore(),
-            match.getCreatedDate()
+            match.getCreatedAt()
         );
     }
 }

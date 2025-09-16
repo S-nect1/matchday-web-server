@@ -72,7 +72,7 @@ public class TeamListResponse {
                 .memberLimit(team.getMemberLimit())
                 .hasBall(team.getHasBall())
                 .profileImageUrl(team.getProfileImageUrl())
-                .createdAt(team.getCreatedDate())
+                .createdAt(team.getCreatedAt())
                 .build();
     }
 }

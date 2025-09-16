@@ -17,13 +17,6 @@ public interface MatchQueryRepository {
             MatchSearchRequest searchRequest,
             Pageable pageable
     );
-
-    // 특정 사용자가 속한 팀들의 모든 확정된 매치 조회 (월별 조회)
-//    List<MyMatchResponse> findMyMatches(
-//            Long userId,
-//            LocalDate startDate,
-//            LocalDate endDate
-//    );
     
     // 특정 팀의 확정된 매치/신청 목록 조회
     Page<TeamConfirmedMatchProjection> findTeamConfirmedMatches(

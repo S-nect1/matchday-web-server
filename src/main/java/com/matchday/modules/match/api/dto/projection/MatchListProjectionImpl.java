@@ -25,5 +25,5 @@ public class MatchListProjectionImpl implements MatchListProjection {
     private Integer fee;
     private MatchSize matchSize;
     private SportsType sportsType;
-    private LocalDateTime createdDate;
+    private LocalDateTime createdAt;
 }

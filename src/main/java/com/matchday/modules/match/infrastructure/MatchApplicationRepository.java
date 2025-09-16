@@ -17,15 +17,15 @@ public interface MatchApplicationRepository extends JpaRepository<MatchApplicati
     boolean existsByMatchAndApplicantTeam(Match match, Team applicantTeam);
     
     // 특정 매치의 모든 신청 조회
-    List<MatchApplication> findByMatchOrderByCreatedDateDesc(Match match);
+    List<MatchApplication> findByMatchOrderByCreatedAtDesc(Match match);
     
     // 특정 매치의 특정 상태 신청들 조회
     List<MatchApplication> findByMatchAndStatus(Match match, MatchApplicationStatus status);
     
     // 특정 팀이 신청한 매치 신청들 조회
-    List<MatchApplication> findByApplicantTeamOrderByCreatedDateDesc(Team applicantTeam);
+    List<MatchApplication> findByApplicantTeamOrderByCreatedAtDesc(Team applicantTeam);
     
     // 홈팀이 받은 신청들 조회
-    @Query("SELECT ma FROM MatchApplication ma WHERE ma.match.homeTeam = :homeTeam ORDER BY ma.createdDate DESC")
+    @Query("SELECT ma FROM MatchApplication ma WHERE ma.match.homeTeam = :homeTeam ORDER BY ma.createdAt DESC")
     List<MatchApplication> findReceivedApplications(@Param("homeTeam") Team homeTeam);
 }

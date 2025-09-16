@@ -25,5 +25,5 @@ public interface MatchListProjection {
     Integer getFee();
     MatchSize getMatchSize();
     SportsType getSportsType();
-    LocalDateTime getCreatedDate();
+    LocalDateTime getCreatedAt();
 }

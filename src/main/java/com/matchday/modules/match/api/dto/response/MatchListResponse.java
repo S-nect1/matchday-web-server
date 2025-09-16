@@ -49,7 +49,7 @@ public class MatchListResponse {
             match.getMatchSize(),
             match.getSportsType(),
             match.isAvailableForApplication(),
-            match.getCreatedDate()
+            match.getCreatedAt()
         );
     }
     
@@ -71,7 +71,7 @@ public class MatchListResponse {
             projection.getMatchSize(),
             projection.getSportsType(),
             true, // PENDING 상태이므로 신청 가능
-            projection.getCreatedDate()
+            projection.getCreatedAt()
         );
     }
 }

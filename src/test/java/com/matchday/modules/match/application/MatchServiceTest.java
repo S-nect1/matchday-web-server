@@ -195,7 +195,7 @@ class MatchServiceTest {
             // given
             given(teamRepository.findById(1L)).willReturn(Optional.of(testTeam));
             given(teamUserRepository.findByTeamIdAndUserId(1L, 1L)).willReturn(Optional.of(testTeamUser));
-            given(matchRepository.findByHomeTeamOrderByCreatedDateDesc(testTeam)).willReturn(List.of(testMatch));
+            given(matchRepository.findByHomeTeamOrderByCreatedAtDesc(testTeam)).willReturn(List.of(testMatch));
 
             // when
             List<MatchListResponse> result = matchService.getTeamMatches(1L, 1L);

@@ -25,7 +25,7 @@ public class MatchApplicationResponse {
             application.getMatch().getId(),
             application.getMessage(),
             application.getStatus(),
-            application.getCreatedDate(),
+            application.getCreatedAt(),
             application.getProcessedAt()
         );
     }

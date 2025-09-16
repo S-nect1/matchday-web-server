@@ -89,7 +89,7 @@ public class MatchApplicationService {
 
         teamUserService.validatePermission(match.getHomeTeam().getId(), userId);
 
-        List<MatchApplication> applications = matchApplicationRepository.findByMatchOrderByCreatedDateDesc(match);
+        List<MatchApplication> applications = matchApplicationRepository.findByMatchOrderByCreatedAtDesc(match);
         
         return applications.stream()
                 .map(MatchApplicationResponse::of)
@@ -103,7 +103,7 @@ public class MatchApplicationService {
         
         teamUserService.validatePermission(teamId, userId);
 
-        List<MatchApplication> applications = matchApplicationRepository.findByApplicantTeamOrderByCreatedDateDesc(team);
+        List<MatchApplication> applications = matchApplicationRepository.findByApplicantTeamOrderByCreatedAtDesc(team);
         
         return applications.stream()
                 .map(MatchApplicationResponse::of)

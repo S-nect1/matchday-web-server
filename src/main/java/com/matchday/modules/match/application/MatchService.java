@@ -138,7 +138,7 @@ public class MatchService {
         teamUserRepository.findByTeamIdAndUserId(teamId, userId)
                 .orElseThrow(() -> new MatchControllerAdvice(ResponseCode._FORBIDDEN));
 
-        List<Match> teamMatches = matchRepository.findByHomeTeamOrderByCreatedDateDesc(team);
+        List<Match> teamMatches = matchRepository.findByHomeTeamOrderByCreatedAtDesc(team);
         
         return teamMatches.stream()
                 .map(MatchListResponse::of)
