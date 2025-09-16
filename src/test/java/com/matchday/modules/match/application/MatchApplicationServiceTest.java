@@ -4,8 +4,8 @@ import com.matchday.modules.match.domain.Match;
 import com.matchday.modules.match.domain.MatchApplication;
 import com.matchday.modules.match.domain.enums.MatchApplicationStatus;
 import com.matchday.modules.match.domain.enums.MatchStatus;
-import com.matchday.modules.match.api.dto.dto.request.MatchApplicationRequest;
-import com.matchday.modules.match.api.dto.dto.response.MatchApplicationResponse;
+import com.matchday.modules.match.api.dto.request.MatchApplicationRequest;
+import com.matchday.modules.match.api.dto.response.MatchApplicationResponse;
 import com.matchday.modules.match.exception.MatchControllerAdvice;
 import com.matchday.modules.match.infrastructure.MatchApplicationRepository;
 import com.matchday.modules.match.infrastructure.MatchRepository;
@@ -13,7 +13,7 @@ import com.matchday.modules.team.domain.Team;
 import com.matchday.modules.team.exception.TeamControllerAdvice;
 import com.matchday.modules.team.infrastructure.TeamRepository;
 import com.matchday.modules.team.application.TeamUserService;
-import com.matchday.modules.team.team.domain.TeamFixture;
+import com.matchday.modules.team.domain.TeamFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -249,7 +249,7 @@ class MatchApplicationServiceTest {
         
         Team homeTeam = TeamFixture.defaultTeam();
         Team applicantTeam = TeamFixture.teamWithName("신청팀");
-        Match match = createPendingMatch(homeTeam);
+        Match match = createPendingMatch(homeTeam, applicantTeam);
         MatchApplication application = createMatchApplication(match, applicantTeam, "신청 메시지");
         
         ReflectionTestUtils.setField(homeTeam, "id", 1L);
@@ -281,7 +281,7 @@ class MatchApplicationServiceTest {
         Team applicantTeam2 = TeamFixture.teamWithName("신청팀2");
         Team applicantTeam3 = TeamFixture.teamWithName("신청팀3");
         
-        Match match = createPendingMatch(homeTeam);
+        Match match = createPendingMatch(homeTeam, applicantTeam1);
         MatchApplication acceptedApplication = createMatchApplication(match, applicantTeam1, "수락될 신청");
         MatchApplication rejectedApplication1 = createMatchApplication(match, applicantTeam2, "거절될 신청1");
         MatchApplication rejectedApplication2 = createMatchApplication(match, applicantTeam3, "거절될 신청2");
@@ -385,7 +385,7 @@ class MatchApplicationServiceTest {
         return MatchApplication.createApplication(match, applicantTeam, message);
     }
     
-    private Match createPendingMatch(Team homeTeam) {
+    private Match createPendingMatch(Team homeTeam, Team awayTeam) {
         Match match = mock(Match.class);
         when(match.getHomeTeam()).thenReturn(homeTeam);
         when(match.getStatus()).thenReturn(MatchStatus.PENDING);
@@ -393,7 +393,7 @@ class MatchApplicationServiceTest {
         doAnswer(invocation -> {
             when(match.getStatus()).thenReturn(MatchStatus.CONFIRMED);
             return null;
-        }).when(match).acceptMatch();
+        }).when(match).acceptMatch(awayTeam);
         return match;
     }
     

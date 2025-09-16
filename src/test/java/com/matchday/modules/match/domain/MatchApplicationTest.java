@@ -3,7 +3,7 @@ package com.matchday.modules.match.domain;
 import com.matchday.modules.match.domain.enums.MatchApplicationStatus;
 import com.matchday.modules.match.exception.MatchControllerAdvice;
 import com.matchday.modules.team.domain.Team;
-import com.matchday.modules.team.team.domain.TeamFixture;
+import com.matchday.modules.team.domain.TeamFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

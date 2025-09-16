@@ -5,7 +5,7 @@ import com.matchday.common.entity.enums.District;
 import com.matchday.modules.match.domain.enums.MatchSize;
 import com.matchday.modules.match.domain.enums.SportsType;
 import com.matchday.modules.team.domain.Team;
-import com.matchday.modules.team.team.domain.TeamFixture;
+import com.matchday.modules.team.domain.TeamFixture;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
