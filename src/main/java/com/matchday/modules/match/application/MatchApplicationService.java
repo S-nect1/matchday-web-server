@@ -5,8 +5,8 @@ import com.matchday.modules.match.domain.Match;
 import com.matchday.modules.match.domain.MatchApplication;
 import com.matchday.modules.match.domain.enums.MatchApplicationStatus;
 import com.matchday.modules.match.domain.enums.MatchStatus;
-import com.matchday.modules.match.api.dto.dto.request.MatchApplicationRequest;
-import com.matchday.modules.match.api.dto.dto.response.MatchApplicationResponse;
+import com.matchday.modules.match.api.dto.request.MatchApplicationRequest;
+import com.matchday.modules.match.api.dto.response.MatchApplicationResponse;
 import com.matchday.modules.match.exception.MatchControllerAdvice;
 import com.matchday.modules.match.infrastructure.MatchApplicationRepository;
 import com.matchday.modules.match.infrastructure.MatchRepository;
@@ -141,7 +141,7 @@ public class MatchApplicationService {
 
         // 신청한 쪽과 등록한 쪽 모두 상태 변경
         application.accept();
-        match.acceptMatch();
+        match.acceptMatch(application.getApplicantTeam());
 
         // 다른 모든 신청들 거절
         rejectOtherApplications(match, application);

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -187,6 +188,23 @@ public class TeamUserService {
         
         // 권한 확인
         if (!teamUser.hasManagementAuthority()) {
+            throw new TeamControllerAdvice(ResponseCode._UNAUTHORIZED);
+        }
+    }
+
+    // 양측 권한 확인
+    public void validateBothPermission(Long homeTeamId, Long awayTeamId, Long userId) {
+        Optional<TeamUser> homeTeamUser = teamUserRepository.findByTeamIdAndUserId(homeTeamId, userId);
+        Optional<TeamUser> awayTeamUser = teamUserRepository.findByTeamIdAndUserId(awayTeamId, userId);
+
+        if (homeTeamUser.isEmpty() && awayTeamUser.isEmpty()) {
+            throw new TeamControllerAdvice(ResponseCode.TEAM_USER_NOT_FOUND);
+        }
+
+        boolean hasAuthority =
+                homeTeamUser.map(TeamUser::hasManagementAuthority).orElse(false)
+                        || awayTeamUser.map(TeamUser::hasManagementAuthority).orElse(false);
+        if (!hasAuthority) {
             throw new TeamControllerAdvice(ResponseCode._UNAUTHORIZED);
         }
     }
