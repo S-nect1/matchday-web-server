@@ -11,7 +11,7 @@ import com.matchday.modules.user.domain.User;
 import com.matchday.modules.user.domain.enums.Gender;
 import com.matchday.modules.user.domain.enums.UserRole;
 import com.matchday.modules.user.repository.UserRepository;
-import com.matchday.security.auth.auth.service.AuthService;
+import com.matchday.security.auth.auth.application.AuthService;
 import com.matchday.security.utils.TokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -2,8 +2,8 @@ package com.matchday.auth.service;
 
 import com.matchday.security.auth.auth.domain.RefreshToken;
 import com.matchday.security.auth.auth.exception.AuthControllerAdvice;
-import com.matchday.security.auth.auth.repository.RefreshTokenRepository;
-import com.matchday.security.auth.auth.service.RefreshTokenService;
+import com.matchday.security.auth.auth.infrastructure.RefreshTokenRepository;
+import com.matchday.security.auth.auth.application.RefreshTokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

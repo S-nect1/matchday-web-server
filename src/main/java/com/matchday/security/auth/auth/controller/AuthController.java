@@ -6,7 +6,7 @@ import com.matchday.security.auth.auth.dto.request.RefreshTokenRequest;
 import com.matchday.security.auth.auth.dto.response.RefreshTokenResponse;
 import com.matchday.security.auth.auth.dto.request.RegisterRequest;
 import com.matchday.security.auth.auth.dto.response.RegisterResponse;
-import com.matchday.security.auth.auth.service.AuthService;
+import com.matchday.security.auth.auth.application.AuthService;
 import com.matchday.common.entity.BaseResponse;
 import com.matchday.common.entity.enums.ResponseCode;
 import jakarta.validation.Valid;

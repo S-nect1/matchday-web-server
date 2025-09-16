@@ -1,6 +1,6 @@
 package com.matchday.auth.service;
 
-import com.matchday.security.auth.auth.service.RefreshTokenService;
+import com.matchday.security.auth.auth.application.RefreshTokenService;
 import com.matchday.security.utils.TokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
