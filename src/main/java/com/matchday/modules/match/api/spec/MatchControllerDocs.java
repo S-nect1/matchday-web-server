@@ -2,10 +2,12 @@ package com.matchday.modules.match.api.spec;
 
 import com.matchday.common.dto.response.PagedResponse;
 import com.matchday.common.entity.BaseResponse;
-import com.matchday.modules.match.api.dto.dto.request.MatchCreateRequest;
-import com.matchday.modules.match.api.dto.dto.request.MatchUpdateRequest;
-import com.matchday.modules.match.api.dto.dto.response.MatchListResponse;
-import com.matchday.modules.match.api.dto.dto.response.MatchResponse;
+import com.matchday.modules.match.api.dto.request.MatchCreateRequest;
+import com.matchday.modules.match.api.dto.request.MatchUpdateRequest;
+import com.matchday.modules.match.api.dto.request.MatchResultRequest;
+import com.matchday.modules.match.api.dto.response.MatchListResponse;
+import com.matchday.modules.match.api.dto.response.MatchResponse;
+import com.matchday.modules.match.api.dto.response.MonthlyMatchResponse;
 import com.matchday.modules.match.domain.enums.MatchSize;
 import com.matchday.modules.match.domain.enums.SportsType;
 import com.matchday.security.filter.JwtUserPrincipal;
@@ -21,7 +23,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Tag(name = "Match", description = "매치 관리 API")
 public interface MatchControllerDocs {
@@ -95,6 +96,27 @@ public interface MatchControllerDocs {
     );
 
     @Operation(
+        summary = "내 매치 목록 조회",
+        description = "사용자가 가입한 모든 팀의 확정된 매치/신청 목록을 월별로 조회합니다. 일자별로 매치 ID 목록을 반환합니다."
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "내 매치 목록 조회 성공",
+            content = @Content(schema = @Schema(implementation = MonthlyMatchResponse.class))
+        ),
+        @ApiResponse(responseCode = "401", description = "인증 필요")
+    })
+    BaseResponse<MonthlyMatchResponse> getAllMyMatches(
+        @Parameter(description = "인증된 사용자 정보", hidden = true)
+        @AuthenticationPrincipal JwtUserPrincipal userPrincipal,
+        @Parameter(description = "조회할 연도 (기본값: 현재 연도)")
+        @RequestParam(required = false) Integer year,
+        @Parameter(description = "조회할 월 (기본값: 현재 월)")
+        @RequestParam(required = false) Integer month
+    );
+
+    @Operation(
         summary = "매치 수정", 
         description = "매치 정보를 수정합니다. 홈팀의 팀장 또는 부팀장만 수정할 수 있으며, PENDING 상태의 매치만 수정 가능합니다."
     )
@@ -111,6 +133,25 @@ public interface MatchControllerDocs {
         @AuthenticationPrincipal JwtUserPrincipal userPrincipal,
         @Parameter(description = "매치 수정 요청", required = true)
         @Valid @RequestBody MatchUpdateRequest request
+    );
+
+    @Operation(
+        summary = "매치 결과 기록",
+        description = "확정된 매치의 점수를 기록합니다. 매치 종료 후 48시간 이내에만 기록 가능하며, 매치에 참여한 팀의 멤버만 기록할 수 있습니다."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "매치 결과 기록 성공"),
+        @ApiResponse(responseCode = "400", description = "잘못된 요청 또는 기록 기한 초과"),
+        @ApiResponse(responseCode = "403", description = "권한 없음 (매치 참여자가 아님)"),
+        @ApiResponse(responseCode = "404", description = "매치를 찾을 수 없음")
+    })
+    BaseResponse<String> recordMatchResult(
+        @Parameter(description = "매치 ID", required = true)
+        @PathVariable Long matchId,
+        @Parameter(description = "인증된 사용자 정보", hidden = true)
+        @AuthenticationPrincipal JwtUserPrincipal userPrincipal,
+        @Parameter(description = "매치 결과 요청", required = true)
+        @Valid @RequestBody MatchResultRequest request
     );
 
     @Operation(

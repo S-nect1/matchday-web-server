@@ -4,11 +4,13 @@ import com.matchday.common.dto.response.PagedResponse;
 import com.matchday.common.entity.BaseResponse;
 import com.matchday.common.entity.enums.ResponseCode;
 import com.matchday.modules.match.api.spec.MatchControllerDocs;
-import com.matchday.modules.match.api.dto.dto.request.MatchCreateRequest;
-import com.matchday.modules.match.api.dto.dto.request.MatchSearchRequest;
-import com.matchday.modules.match.api.dto.dto.request.MatchUpdateRequest;
-import com.matchday.modules.match.api.dto.dto.response.MatchListResponse;
-import com.matchday.modules.match.api.dto.dto.response.MatchResponse;
+import com.matchday.modules.match.api.dto.request.MatchCreateRequest;
+import com.matchday.modules.match.api.dto.request.MatchSearchRequest;
+import com.matchday.modules.match.api.dto.request.MatchUpdateRequest;
+import com.matchday.modules.match.api.dto.request.MatchResultRequest;
+import com.matchday.modules.match.api.dto.response.MatchListResponse;
+import com.matchday.modules.match.api.dto.response.MatchResponse;
+import com.matchday.modules.match.api.dto.response.MonthlyMatchResponse;
 import com.matchday.modules.match.application.MatchService;
 import com.matchday.modules.match.domain.enums.MatchSize;
 import com.matchday.modules.match.domain.enums.SportsType;
@@ -20,7 +22,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.time.YearMonth;
 
 @RestController
 @RequestMapping("/matches")
@@ -75,11 +77,28 @@ public class MatchController implements MatchControllerDocs {
         return BaseResponse.onSuccess(response, ResponseCode.OK);
     }
 
-    // TODO: 내가 가입한 모든 팀의 모든 확정된 매치/신청 목록 (response: 날짜, matchId, 페이지네이션: month)
-
+    // 내가 가입한 모든 팀의 확정된 매치/신청 목록 조회 (캘린더용)
+    @GetMapping("/my")
+    public BaseResponse<MonthlyMatchResponse> getAllMyMatches(
+            @AuthenticationPrincipal JwtUserPrincipal userPrincipal,
+            @RequestParam Integer year,
+            @RequestParam Integer month
+    ) {
+        // 현재 년/월 기본
+        YearMonth targetMonth = (year != null && month != null) ? 
+                YearMonth.of(year, month) : YearMonth.now();
+        
+        LocalDate startDate = targetMonth.atDay(1);
+        LocalDate endDate = targetMonth.atEndOfMonth();
+        
+        MonthlyMatchResponse response = matchService.getMonthlyMatches(
+                userPrincipal.getUserId(), startDate, endDate);
+        
+        return BaseResponse.onSuccess(response, ResponseCode.OK);
+    }
 
     // 매치 수정
-    @PutMapping("/{matchId}")
+    @PatchMapping("/{matchId}")
     public BaseResponse<String> updateMatch(
             @PathVariable Long matchId,
             @AuthenticationPrincipal JwtUserPrincipal userPrincipal,
@@ -87,6 +106,17 @@ public class MatchController implements MatchControllerDocs {
         
         matchService.updateMatch(matchId, userPrincipal.getUserId(), request);
         return BaseResponse.onSuccess("매치가 수정되었습니다.", ResponseCode.OK);
+    }
+
+    // 매치 결과 기록 (48시간 이내에만 가능)
+    @PatchMapping("/{matchId}/result")
+    public BaseResponse<String> recordMatchResult(
+            @PathVariable Long matchId,
+            @AuthenticationPrincipal JwtUserPrincipal userPrincipal,
+            @Valid @RequestBody MatchResultRequest request) {
+        
+        matchService.recordMatchResult(matchId, userPrincipal.getUserId(), request);
+        return BaseResponse.onSuccess("매치 결과가 기록되었습니다.", ResponseCode.OK);
     }
 
     // 매치 취소

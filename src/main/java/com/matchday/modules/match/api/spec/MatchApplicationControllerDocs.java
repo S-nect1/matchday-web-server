@@ -1,8 +1,8 @@
 package com.matchday.modules.match.api.spec;
 
 import com.matchday.common.entity.BaseResponse;
-import com.matchday.modules.match.api.dto.dto.request.MatchApplicationRequest;
-import com.matchday.modules.match.api.dto.dto.response.MatchApplicationResponse;
+import com.matchday.modules.match.api.dto.request.MatchApplicationRequest;
+import com.matchday.modules.match.api.dto.response.MatchApplicationResponse;
 import com.matchday.security.filter.JwtUserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
