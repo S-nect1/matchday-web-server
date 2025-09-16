@@ -29,6 +29,9 @@ public class Match extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private Team homeTeam;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = true)
+    private Team awayTeam;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -76,6 +79,7 @@ public class Match extends BaseEntity {
                                    Boolean hasBall, SportsType sportsType, String notes) {
         Match match = new Match();
         match.homeTeam = homeTeam;
+        match.awayTeam = null;
         match.city = city;
         match.district = district;
         match.placeName = placeName;
@@ -114,10 +118,11 @@ public class Match extends BaseEntity {
     }
 
     // 매치 수락(대기 상태에서만 가능)
-    public void acceptMatch() {
-        if (!this.status.equals(MatchStatus.PENDING)) {
+    public void acceptMatch(Team awayTeam) {
+        if (!this.status.equals(MatchStatus.PENDING) || awayTeam != null) {
             throw new MatchControllerAdvice(ResponseCode._BAD_REQUEST);
         }
+        this.awayTeam = awayTeam;
         this.status = MatchStatus.CONFIRMED;
     }
 
@@ -131,7 +136,7 @@ public class Match extends BaseEntity {
 
     // 매치 신청 가능 여부
     public boolean isAvailableForApplication() {
-        return this.status.equals(MatchStatus.PENDING) &&
+        return this.status.equals(MatchStatus.PENDING) && this.awayTeam == null &&
                (this.date.isAfter(LocalDate.now()) ||
                (this.date.isEqual(LocalDate.now()) && this.startTime.isAfter(LocalTime.now())));
     }
